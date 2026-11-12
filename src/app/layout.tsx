@@ -1,29 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Cairo, Tajawal, Inter } from "next/font/google";
 import "./globals.css";
 import FloatingSupportWidget from "@/components/public/FloatingSupportWidget";
 import { BottomNavBar } from "@/components/public/BottomNavBar";
-
-// Arabic fonts
-const cairo = Cairo({
-  subsets: ["arabic", "latin"],
-  variable: "--font-cairo",
-  display: "swap",
-});
-
-const tajawal = Tajawal({
-  subsets: ["arabic", "latin"],
-  variable: "--font-tajawal",
-  weight: ["300", "400", "500", "700", "800"],
-  display: "swap",
-});
-
-// Latin font
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_APP_URL ||
@@ -146,13 +124,16 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="ar"
-      dir="rtl"
-      className={`${cairo.variable} ${tajawal.variable} ${inter.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
+        {/* Google Fonts Preconnect and Stylesheet */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+
         {/* WhatsApp, Facebook & Search Engines Direct Meta Fallbacks */}
         <meta property="og:title" content={SITE_TITLE} />
         <meta property="og:description" content={SITE_DESCRIPTION} />
@@ -194,7 +175,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased">
+      <body className="antialiased font-sans">
         {children}
         <FloatingSupportWidget />
         <BottomNavBar />
