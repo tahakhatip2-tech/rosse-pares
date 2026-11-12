@@ -12,10 +12,15 @@ import {
   Barcode,
   Printer,
   Sparkles,
+  FolderPlus,
 } from "lucide-react";
 import { ProductImagesUploader } from "@/components/admin/ProductImagesUploader";
 import { BarcodeSvg } from "@/components/admin/BarcodeSvg";
 import { BarcodeLabelModal } from "@/components/admin/BarcodeLabelModal";
+import {
+  CategoryModal,
+  type CategoryOptionItem,
+} from "@/components/admin/CategoryModal";
 
 interface CategoryOption {
   id: string;
@@ -54,8 +59,9 @@ interface ProductFormProps {
 export function ProductForm({ mode, initialProduct }: ProductFormProps) {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
-  const [categories, setCategories] = useState<CategoryOption[]>([]);
+  const [categories, setCategories] = useState<CategoryOptionItem[]>([]);
   const [loadingCats, setLoadingCats] = useState(true);
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [feedback, setFeedback] = useState<{
     kind: "success" | "error";
     text: string;
@@ -84,7 +90,7 @@ export function ProductForm({ mode, initialProduct }: ProductFormProps) {
     costPrice:
       initialProduct?.costPrice !== undefined ? String(initialProduct.costPrice) : "",
     taxRate: initialProduct?.taxRate !== undefined ? String(initialProduct.taxRate) : "16",
-    unit: initialProduct?.unit || "piece",
+    unit: initialProduct?.unit || "قطعة",
     weight: initialProduct?.weight ? String(initialProduct.weight) : "",
     shelfLifeHours:
       initialProduct?.shelfLifeHours !== undefined && initialProduct?.shelfLifeHours !== null
@@ -101,11 +107,11 @@ export function ProductForm({ mode, initialProduct }: ProductFormProps) {
 
   useEffect(() => {
     let active = true;
-    fetch("/api/categories")
+    fetch("/api/categories", { cache: "no-store" })
       .then((res) => res.json())
       .then((json) => {
         if (!active) return;
-        const list: CategoryOption[] = Array.isArray(json?.data) ? json.data : [];
+        const list: CategoryOptionItem[] = Array.isArray(json?.data) ? json.data : [];
         setCategories(list);
         if (!formData.categoryId && list.length > 0) {
           setFormData((prev) => ({ ...prev, categoryId: list[0].id }));
@@ -212,7 +218,7 @@ export function ProductForm({ mode, initialProduct }: ProductFormProps) {
           <h1 className="text-2xl font-black text-stone-900 dark:text-stone-100 flex items-center gap-2">
             <Layers className="w-6 h-6 text-amber-600" />
             <span>
-              {mode === "edit" ? "تعديل بيانات وصور المنتج" : "إضافة صنف بناء وديكور جديد"}
+              {mode === "edit" ? "تعديل بيانات وصور المنتج" : "إضافة المنتجات"}
             </span>
           </h1>
         </div>
@@ -369,9 +375,19 @@ export function ProductForm({ mode, initialProduct }: ProductFormProps) {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-                التصنيف *
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300">
+                  التصنيف *
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setCategoryModalOpen(true)}
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 dark:hover:bg-amber-900/60 border border-amber-500/30 text-[11px] font-bold text-amber-700 dark:text-amber-300 transition"
+                >
+                  <FolderPlus className="w-3 h-3" />
+                  <span>+ إضافة صنف جديد</span>
+                </button>
+              </div>
               <select
                 required
                 value={formData.categoryId}
@@ -382,11 +398,11 @@ export function ProductForm({ mode, initialProduct }: ProductFormProps) {
                 {loadingCats ? (
                   <option value="">جاري تحميل التصنيفات...</option>
                 ) : categories.length === 0 ? (
-                  <option value="">لا توجد تصنيفات متاحة</option>
+                  <option value="">لا توجد تصنيفات متاحة — أضف صنفاً أولاً</option>
                 ) : (
                   categories.map((cat) => (
                     <option key={cat.id} value={cat.id}>
-                      {cat.nameAr} ({cat.nameEn})
+                      {cat.nameAr} {cat.nameEn && cat.nameEn !== cat.nameAr ? `(${cat.nameEn})` : ""}
                     </option>
                   ))
                 )}
@@ -402,7 +418,7 @@ export function ProductForm({ mode, initialProduct }: ProductFormProps) {
                 dir="ltr"
                 value={formData.slug}
                 onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                placeholder="taboon-bread (يُنشأ تلقائياً إذا تُرك فارغاً)"
+                placeholder="paint-matte-18l (يُنشأ تلقائياً إذا تُرك فارغاً)"
                 className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs text-stone-900 dark:text-stone-100 font-mono focus:outline-none focus:border-amber-500 text-right"
               />
             </div>
@@ -416,20 +432,20 @@ export function ProductForm({ mode, initialProduct }: ProductFormProps) {
               rows={3}
               value={formData.descriptionAr}
               onChange={(e) => setFormData({ ...formData, descriptionAr: e.target.value })}
-              placeholder="وصف مكونات المنتج ومذاقه وطريقة تقديمه (سيظهر أول كلمتين منه في البطاقة والوصف الكامل في صفحة التفاصيل)..."
+              placeholder="وصف مواصفات المنتج، المساحة أو السماكة، الاستخدامات، ومميزات الجودة (يظهر الملخص في البطاقة والوصف الكامل في صفحة التفاصيل)..."
               className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
             />
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-              المكونات الطبيعية (تظهر في صفحة تفاصيل المنتج)
+              المواصفات الفنية والمواد (تظهر في صفحة تفاصيل المنتج)
             </label>
             <textarea
               rows={2}
               value={formData.ingredientsAr}
               onChange={(e) => setFormData({ ...formData, ingredientsAr: e.target.value })}
-              placeholder="مثال: دقيق قمح بلدي، ماء نقي، خميرة طبيعية، زيت زيتون بكر، رشة ملح بحري"
+              placeholder="مثال: مقاوم للرطوبة والحرارة، تغطية عالية، مطابق للمواصفات القياسية الأردنية"
               className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
             />
           </div>
@@ -452,7 +468,7 @@ export function ProductForm({ mode, initialProduct }: ProductFormProps) {
                 required
                 value={formData.retailPrice}
                 onChange={(e) => setFormData({ ...formData, retailPrice: e.target.value })}
-                placeholder="1.50"
+                placeholder="25.00"
                 className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs font-mono font-bold text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
               />
             </div>
@@ -466,7 +482,7 @@ export function ProductForm({ mode, initialProduct }: ProductFormProps) {
                 step="0.01"
                 value={formData.costPrice}
                 onChange={(e) => setFormData({ ...formData, costPrice: e.target.value })}
-                placeholder="0.65"
+                placeholder="18.50"
                 className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs font-mono text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
               />
             </div>
@@ -495,6 +511,10 @@ export function ProductForm({ mode, initialProduct }: ProductFormProps) {
                 onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
                 className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
               >
+                {formData.unit &&
+                  !["لوح", "عبوة", "كيس", "متر", "قطعة", "رول", "كغم"].includes(
+                    formData.unit
+                  ) && <option value={formData.unit}>{formData.unit}</option>}
                 <option value="لوح">لوح</option>
                 <option value="عبوة">عبوة / سطل</option>
                 <option value="كيس">كيس</option>
@@ -632,6 +652,21 @@ export function ProductForm({ mode, initialProduct }: ProductFormProps) {
               }
             : null
         }
+      />
+      <CategoryModal
+        isOpen={categoryModalOpen}
+        onClose={() => setCategoryModalOpen(false)}
+        existingCategories={categories}
+        onCreated={(newCat) => {
+          setCategories((prev) =>
+            prev.some((c) => c.id === newCat.id) ? prev : [...prev, newCat]
+          );
+          setFormData((prev) => ({ ...prev, categoryId: newCat.id }));
+          setFeedback({
+            kind: "success",
+            text: `تمت إضافة الصنف «${newCat.nameAr}» وتحديده تلقائياً للمنتج.`,
+          });
+        }}
       />
     </div>
   );

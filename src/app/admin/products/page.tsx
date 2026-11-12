@@ -17,8 +17,13 @@ import {
   ImageIcon,
   Barcode,
   Printer,
+  FolderPlus,
 } from "lucide-react";
 import { BarcodeLabelModal } from "@/components/admin/BarcodeLabelModal";
+import {
+  CategoryModal,
+  type CategoryOptionItem,
+} from "@/components/admin/CategoryModal";
 
 interface AdminProductRow {
   id: string;
@@ -40,12 +45,14 @@ interface AdminProductRow {
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<AdminProductRow[]>([]);
+  const [dbCategories, setDbCategories] = useState<CategoryOptionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [backfilling, setBackfilling] = useState(false);
   const [barcodeNotice, setBarcodeNotice] = useState<string | null>(null);
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
   const [labelModalProduct, setLabelModalProduct] = useState<{
     id: string;
     nameAr: string;
@@ -56,7 +63,9 @@ export default function AdminProductsPage() {
 
   const loadProducts = async () => {
     try {
-      const res = await fetch("/api/products?all=true&limit=100");
+      const res = await fetch("/api/products?all=true&limit=100", {
+        cache: "no-store",
+      });
       const json = await res.json();
       const items: AdminProductRow[] = Array.isArray(json?.data?.items)
         ? json.data.items
@@ -67,16 +76,35 @@ export default function AdminProductsPage() {
     }
   };
 
+  const loadCategories = async () => {
+    try {
+      const res = await fetch("/api/categories", { cache: "no-store" });
+      const json = await res.json();
+      if (Array.isArray(json?.data)) {
+        setDbCategories(json.data);
+      }
+    } catch {
+      // Keep existing list on failure
+    }
+  };
+
   useEffect(() => {
     let active = true;
-    fetch("/api/products?all=true&limit=100")
-      .then((res) => res.json())
-      .then((json) => {
+    Promise.all([
+      fetch("/api/products?all=true&limit=100", { cache: "no-store" }).then((r) =>
+        r.json()
+      ),
+      fetch("/api/categories", { cache: "no-store" }).then((r) => r.json()),
+    ])
+      .then(([prodJson, catJson]) => {
         if (!active) return;
-        const items: AdminProductRow[] = Array.isArray(json?.data?.items)
-          ? json.data.items
+        const items: AdminProductRow[] = Array.isArray(prodJson?.data?.items)
+          ? prodJson.data.items
           : [];
         setProducts(items);
+        if (Array.isArray(catJson?.data)) {
+          setDbCategories(catJson.data);
+        }
       })
       .catch(() => {
         // Keep empty state on failure
@@ -97,8 +125,10 @@ export default function AdminProductsPage() {
       p.nameEn.toLowerCase().includes(q) ||
       p.sku.toLowerCase().includes(q) ||
       Boolean(p.barcodes?.some((b) => b.code.toLowerCase().includes(q)));
-    const catName = p.category?.nameAr || "أخرى";
-    const matchCat = selectedCategory === "ALL" || catName === selectedCategory;
+    const matchCat =
+      selectedCategory === "ALL" ||
+      p.category?.id === selectedCategory ||
+      p.category?.nameAr === selectedCategory;
     return matchSearch && matchCat;
   });
 
@@ -167,10 +197,6 @@ export default function AdminProductsPage() {
     }
   };
 
-  const categories = Array.from(
-    new Set(products.map((p) => p.category?.nameAr || "أخرى"))
-  );
-
   const toggleStatus = async (product: AdminProductRow) => {
     setBusyId(product.id);
     try {
@@ -215,10 +241,10 @@ export default function AdminProductsPage() {
         <div>
           <h1 className="text-2xl font-black text-stone-900 dark:text-stone-100 flex items-center gap-2">
             <Layers className="w-6 h-6 text-amber-600" />
-            <span>إدارة المنتجات وقائمة الأصناف</span>
+            <span>إدارة المنتجات والأصناف</span>
           </h1>
           <p className="text-xs text-stone-500 mt-1">
-            إدارة أصناف مواد البناء والديكور، رفع حتى 5 صور لكل منتج، والأسعار وتفاصيل العرض
+            إدارة منتجات وتصنيفات مواد البناء والديكور، رفع حتى 5 صور لكل منتج، والأسعار وتفاصيل العرض
           </p>
         </div>
 
@@ -239,12 +265,21 @@ export default function AdminProductsPage() {
             </span>
           </button>
 
+          <button
+            type="button"
+            onClick={() => setCategoryModalOpen(true)}
+            className="px-4 py-2.5 rounded-xl border border-amber-600/35 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-800 dark:text-amber-300 font-bold text-xs flex items-center gap-2 transition"
+          >
+            <FolderPlus className="w-4 h-4" />
+            <span>+ إضافة صنف جديد</span>
+          </button>
+
           <Link
             href="/admin/products/new"
             className="px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition"
           >
             <Plus className="w-4 h-4" />
-            <span>إضافة صنف جديد</span>
+            <span>إضافة منتج</span>
           </Link>
         </div>
       </div>
@@ -263,33 +298,76 @@ export default function AdminProductsPage() {
       )}
 
       {/* Filter and Search Bar */}
-      <div className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-stone-400 absolute right-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder="بحث بالاسم، الباركود، أو SKU..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pr-9 pl-4 py-2 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs text-stone-900 dark:text-stone-100 placeholder-stone-400 focus:outline-none focus:border-amber-500"
-          />
+      <div className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 space-y-3">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="relative w-full sm:w-80">
+            <Search className="w-4 h-4 text-stone-400 absolute right-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="بحث بالاسم، الباركود، أو SKU..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pr-9 pl-4 py-2 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs text-stone-900 dark:text-stone-100 placeholder-stone-400 focus:outline-none focus:border-amber-500"
+            />
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <span className="text-xs text-stone-500 shrink-0">التصنيف:</span>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-3 py-2 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
+            >
+              <option value="ALL">جميع التصنيفات ({dbCategories.length})</option>
+              {dbCategories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nameAr}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <span className="text-xs text-stone-500 shrink-0">التصنيف:</span>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-3 py-2 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
-          >
-            <option value="ALL">جميع التصنيفات</option>
-            {categories.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
+        {dbCategories.length > 0 && (
+          <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-stone-100 dark:border-stone-800">
+            <button
+              type="button"
+              onClick={() => setSelectedCategory("ALL")}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition ${
+                selectedCategory === "ALL"
+                  ? "bg-amber-600 text-white"
+                  : "bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700"
+              }`}
+            >
+              الكل ({products.length})
+            </button>
+            {dbCategories.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setSelectedCategory(c.id)}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold transition ${
+                  selectedCategory === c.id
+                    ? "bg-amber-600 text-white"
+                    : "bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700"
+                }`}
+              >
+                <span>{c.nameAr}</span>
+                {typeof c._count?.products === "number" && (
+                  <span
+                    className={`px-1.5 rounded text-[10px] font-mono ${
+                      selectedCategory === c.id
+                        ? "bg-white/20 text-white"
+                        : "bg-white dark:bg-stone-900 text-stone-500"
+                    }`}
+                  >
+                    {c._count.products}
+                  </span>
+                )}
+              </button>
             ))}
-          </select>
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Products Table */}
@@ -301,7 +379,7 @@ export default function AdminProductsPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="py-14 text-center text-xs text-stone-500">
-            لا توجد منتجات مطابقة للبحث. يمكنك إضافة صنف جديد من الزر أعلاه.
+            لا توجد منتجات مطابقة للبحث. يمكنك إضافة منتج جديد من الزر أعلاه.
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -500,6 +578,18 @@ export default function AdminProductsPage() {
               }
             : undefined
         }
+      />
+      <CategoryModal
+        isOpen={categoryModalOpen}
+        onClose={() => setCategoryModalOpen(false)}
+        existingCategories={dbCategories}
+        onCreated={(newCat) => {
+          setDbCategories((prev) =>
+            prev.some((c) => c.id === newCat.id) ? prev : [...prev, newCat]
+          );
+          setBarcodeNotice(`تمت إضافة الصنف «${newCat.nameAr}» بنجاح وأصبح متاحاً لاختيار المنتجات.`);
+          void loadCategories();
+        }}
       />
     </div>
   );
