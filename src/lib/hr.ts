@@ -12,42 +12,42 @@ export const STAFF_ROLE_OPTIONS: {
   label: string;
   description: string;
 }[] = [
-  {
-    value: "BRANCH_MANAGER",
-    label: "مدير فرع",
-    description: "إدارة الفرع، الموظفين، الحضور، المخزون، والمبيعات",
-  },
-  {
-    value: "CASHIER",
-    label: "كاشير",
-    description: "نقطة البيع (POS) والطلبات واستلام المدفوعات",
-  },
-  {
-    value: "PRODUCTION_STAFF",
-    label: "موظف إنتاج / خبّاز",
-    description: "الإنتاج اليومي والوصفات وتجهيز المخبوزات",
-  },
-  {
-    value: "WAREHOUSE_STAFF",
-    label: "موظف مستودع",
-    description: "جرد المواد الأولية والاستلام والتحويلات",
-  },
-  {
-    value: "CONTENT_MANAGER",
-    label: "مدير محتوى وتسويق",
-    description: "إدارة المنتجات والعروض والأخبار",
-  },
-  {
-    value: "BUSINESS_OWNER",
-    label: "صاحب العمل",
-    description: "صلاحيات إدارية ومالية كاملة",
-  },
-];
+    {
+      value: "BRANCH_MANAGER",
+      label: "مدير فرع",
+      description: "إدارة الفرع، الموظفين، الحضور، المخزون، والمبيعات",
+    },
+    {
+      value: "CASHIER",
+      label: "كاشير",
+      description: "نقطة البيع (POS) والطلبات واستلام المدفوعات",
+    },
+    {
+      value: "PRODUCTION_STAFF",
+      label: "فني تجهيز ومواد",
+      description: "تجهيز طلبيات الديكور والأخشاب والمواد للمشاريع",
+    },
+    {
+      value: "WAREHOUSE_STAFF",
+      label: "موظف مستودع",
+      description: "جرد المواد الأولية والاستلام والتحويلات",
+    },
+    {
+      value: "CONTENT_MANAGER",
+      label: "مدير محتوى وتسويق",
+      description: "إدارة المنتجات والعروض والأخبار",
+    },
+    {
+      value: "BUSINESS_OWNER",
+      label: "صاحب العمل",
+      description: "صلاحيات إدارية ومالية كاملة",
+    },
+  ];
 
 export const DEPARTMENT_OPTIONS = [
   "الإدارة والإشراف",
-  "المخبز والإنتاج",
-  "الحلويات والمعجنات",
+  "التشطيبات والديكور",
+  "الدهانات ومواد البناء",
   "نقاط البيع والكاشير",
   "المستودع والإمداد",
   "التوصيل والخدمات",

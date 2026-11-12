@@ -79,7 +79,7 @@ export const useCartStore = create<CartStore>()(
       },
     }),
     {
-      name: "rawabi-cart-storage",
+      name: "rozeparees-cart-storage",
     }
   )
 );

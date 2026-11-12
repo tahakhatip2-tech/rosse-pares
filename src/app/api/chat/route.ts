@@ -50,9 +50,9 @@ interface BranchRecord {
 }
 
 const DEFAULT_QUICK_REPLIES = [
-  "ما هي المنتجات المميزة اليوم؟",
-  "أين تقع فروعكم وساعات العمل؟",
-  "هل يوجد توصيل أو طلبات جملة؟",
+  "ما هي المواد والمنتجات المميزة؟",
+  "أين يقع معرضكم وساعات العمل؟",
+  "هل يوجد توصيل أو أسعار مقاولين؟",
   "تحدث مع خدمة العملاء واتساب",
 ];
 
@@ -114,8 +114,8 @@ function toSuggestion(p: ProductWithCategory): ChatProductSuggestion {
     nameEn: p.nameEn,
     price: p.retailPrice,
     unit: p.unit,
-    image: p.images[0] || "/rwabifarah.png",
-    categoryAr: p.category?.nameAr ?? "مخبوزات",
+    image: p.images[0] || "/rozeparees.png",
+    categoryAr: p.category?.nameAr ?? "مواد بناء وديكور",
   };
 }
 
@@ -182,9 +182,9 @@ function buildSmartReply(
   if (hasAnyKeyword(norm, ["واتس", "واتساب", "whatsapp", "موظف", "بشري", "خدمه العملاء", "اتصال"])) {
     return {
       reply:
-        "بكل سرور! يمكنك التواصل مباشرة مع فريق خدمة عملاء مخابز روابي الفرح عبر الواتساب على الرقم +962 7 9808 0411 للرد الفوري على الطلبات الخاصة أو الاستفسارات.",
+        "بكل سرور! يمكنك التواصل مباشرة مع فريق المبيعات والدعم الفني في روز باريس لمواد البناء والديكور عبر الواتساب على الرقم 0770585313 (+962 7 7058 5313) للرد الفوري على عروض الأسعار والطلبات الخاصة.",
       products: [],
-      quickReplies: ["ما هي المنتجات المميزة اليوم؟", "أين تقع فروعكم؟"],
+      quickReplies: ["ما هي المواد والمنتجات المميزة؟", "أين يقع معرضكم وساعات العمل؟"],
       showWhatsAppHandoff: true,
     };
   }
@@ -198,7 +198,7 @@ function buildSmartReply(
     const sample = featured.length > 0 ? featured : products.slice(0, 3);
     return {
       reply:
-        "أهلاً وسهلاً بك في مخابز روابي الفرح! 🥐 أنا مساعدك الذكي، يسعدني مساعدتك في معرفة الأصناف الطازجة والأسعار والفروع أو طلبات الجملة. كيف أخدمك اليوم؟",
+        "أهلاً وسهلاً بك في روز باريس لمواد البناء والديكور! 🏗️ أنا مستشارك الذكي، يسعدني مساعدتك في اختيار الدهانات، الجبس بورد، بديل الخشب والرخام، مواد العزل، وأسعار المقاولين والمشاريع. كيف أخدمك اليوم؟",
       products: sample.map(toSuggestion),
       quickReplies: DEFAULT_QUICK_REPLIES,
       showWhatsAppHandoff: false,
@@ -206,7 +206,7 @@ function buildSmartReply(
   }
 
   // 3. Branches, locations, working hours
-  if (hasAnyKeyword(norm, ["فرع", "فروع", "موقع", "عنوان", "ساعات", "دوام", "تفتح", "تغلق", "وين", "مكان", "هاتف", "تليفون"])) {
+  if (hasAnyKeyword(norm, ["فرع", "فروع", "معرض", "مستودع", "موقع", "عنوان", "ساعات", "دوام", "تفتح", "تغلق", "وين", "مكان", "هاتف", "تليفون"])) {
     const branchLines =
       branches.length > 0
         ? branches.map((b, idx) => {
@@ -219,42 +219,41 @@ function buildSmartReply(
             return parts.join(" — ");
           })
         : [
-            "1. الفرع الرئيسي — الرابية بجانب مجمع البنوك (07:00 ص – 11:00 م)",
-            "2. فرع غرب عمّان — الدوار السابع، شارع المطار (07:00 ص – 12:00 منتصف الليل)",
+            "1. المعرض والمستودع الرئيسي — عمّان / أم نوارة — نزول إشارات الغاز (السبت–الخميس 08:00 ص – 08:00 م)",
           ];
 
     return {
-      reply: `يسعدنا استقبالكم يومياً في فروعنا:\n${branchLines.join("\n")}\n\nوللاستفسار الفوري أو مشاركة الموقع عبر واتساب تواصلوا معنا على +962 7 9808 0411.`,
+      reply: `يسعدنا استقبالكم في معرضنا ومستودعنا الرئيسي:\n${branchLines.join("\n")}\n\nوللاستفسار الفوري أو إرسال الموقع (Location) عبر واتساب تواصلوا معنا على 0770585313.`,
       products: [],
-      quickReplies: ["هل يوجد توصيل؟", "عرض المخبوزات المميزة", "تحدث مع خدمة العملاء واتساب"],
+      quickReplies: ["هل يوجد توصيل؟", "ما هي المواد والمنتجات المميزة؟", "تحدث مع خدمة العملاء واتساب"],
       showWhatsAppHandoff: true,
     };
   }
 
-  // 4. B2B / Wholesale
-  if (hasAnyKeyword(norm, ["جمله", "تجار", "مقاهي", "مطاعم", "فنادق", "كافيه", "توريد", "تعاقد", "b2b", "شركات"])) {
+  // 4. B2B / Wholesale / Contractors
+  if (hasAnyKeyword(norm, ["جمله", "تجار", "مقاول", "مقاولين", "مهندس", "مهندسين", "مشاريع", "ورشه", "توريد", "تعاقد", "b2b", "شركات", "عرض سعر"])) {
     return {
       reply:
-        "نوفر في روابي الفرح خدمة التوريد اليومي بالجملة للمطاعم والفنادق والمقاهي بأسعار تعاقدية خاصة ومواعيد توصيل صباحية مضمونة.\nيمكنك زيارة صفحة الجملة (B2B) من القائمة العلوية أو مراسلة فريق المبيعات مباشرة عبر الواتساب +962 7 9808 0411.",
+        "نوفر في روز باريس لمواد البناء والديكور خدمة التوريد المباشر للمقاولين، المهندسين، وشركات الإنشاءات والتشطيبات بأسعار جملة تنافسية وتوصيل سريع لمواقع العمل.\nيمكنك زيارة صفحة المقاولين والمشاريع (B2B) من القائمة العلوية أو مراسلة فريق المبيعات مباشرة عبر الواتساب 0770585313.",
       products: [],
-      quickReplies: ["أين تقع فروعكم؟", "ما هي الأصناف المتوفرة؟", "تحدث مع خدمة العملاء واتساب"],
+      quickReplies: ["أين يقع معرضكم وساعات العمل؟", "ما هي المواد والمنتجات المميزة؟", "تحدث مع خدمة العملاء واتساب"],
       showWhatsAppHandoff: true,
     };
   }
 
   // 5. Delivery / Custom Orders / Order tracking
-  if (hasAnyKeyword(norm, ["توصيل", "شحن", "طلبيه", "طلب خاص", "مناسبات", "حفلات", "تتبع", "وصل"])) {
+  if (hasAnyKeyword(norm, ["توصيل", "شحن", "طلبيه", "طلب خاص", "كميه", "كميات", "تتبع", "وصل", "نقل"])) {
     return {
       reply:
-        "يمكنك الطلب بسهولة عبر المتجر بإضافة المنتجات للسلة ثم إتمام الطلب من صفحة الدفع، ونحرص على تحضير مخبوزاتك طازجة يومياً.\nللطلبات الخاصة بالمناسبات أو متابعة طلب قائم، يمكنك مراسلتنا مباشرة على واتساب +962 7 9808 0411.",
+        "نوفر توصيلاً سريعاً إلى مواقع البناء والورش في عمّان والمحافظات، مع إمكانية تجهيز الطلبيات الكبيرة مباشرة من مستودع أم نوارة.\nلطلبات الكميات والمشاريع أو متابعة طلب قائم، تواصلوا معنا مباشرة على واتساب 0770585313.",
       products: [],
-      quickReplies: ["ما هي المنتجات المميزة اليوم؟", "أين تقع فروعكم؟", "تحدث مع خدمة العملاء واتساب"],
+      quickReplies: ["ما هي المواد والمنتجات المميزة؟", "أين يقع معرضكم وساعات العمل؟", "تحدث مع خدمة العملاء واتساب"],
       showWhatsAppHandoff: true,
     };
   }
 
-  // 6. Allergens / Ingredients inquiry (either on current product or matched products)
-  if (hasAnyKeyword(norm, ["حساسيه", "جلوتين", "غلوتين", "مكسرات", "حليب", "لاكتوز", "مكونات", "يحتوي", "خالي"])) {
+  // 6. Technical specs / Materials / Safety instructions (repurposing ingredientsAr & allergens)
+  if (hasAnyKeyword(norm, ["مكونات", "مواصفات", "تركيبه", "جوده", "استخدام", "تحذير", "سلامه", "امان", "رطوبه", "حريق", "مقاوم", "يحتوي", "خالي", "تخزين", "ماده"])) {
     const scored = products
       .map((p) => ({ p, score: scoreProduct(p, tokens, norm) }))
       .filter((item) => item.score > 0)
@@ -264,14 +263,14 @@ function buildSmartReply(
     const targets = scored.length > 0 ? scored.slice(0, 3) : activePageProduct ? [activePageProduct] : [];
     if (targets.length > 0) {
       const details = targets.map((p) => {
-        const ing = p.ingredientsAr ? `المكونات: ${p.ingredientsAr}` : "المكونات الطبيعية الطازجة من مخبزنا";
-        const allg = p.allergens.length > 0 ? `تنبيه الحساسية: ${p.allergens.join("، ")}` : "لم تُسجَّل مسببات حساسية محددة في النظام";
-        return `• ${p.nameAr}: ${ing}. (${allg})`;
+        const spec = p.ingredientsAr ? `المواصفات والتركيب: ${p.ingredientsAr}` : "خامات بناء وديكور معتمدة عالية الجودة";
+        const notes = p.allergens.length > 0 ? `إرشادات السلامة والاستخدام: ${p.allergens.join("، ")}` : "مناسب للاستخدام المعماري والإنشائي وفق الأصول الفنية";
+        return `• ${p.nameAr}: ${spec}. (${notes})`;
       });
       return {
-        reply: `${details.join("\n")}\n\nإذا كانت لديك حساسية شديدة يرجى التأكد معنا عبر واتساب قبل الطلب حرصاً على سلامتك.`,
+        reply: `${details.join("\n")}\n\nللاستشارة الهندسية الدقيقة حول الكميات وطرق التركيب، يسعدنا تواصلك عبر الواتساب 0770585313.`,
         products: targets.map(toSuggestion),
-        quickReplies: ["تحدث مع خدمة العملاء واتساب", "عرض المنتجات المميزة"],
+        quickReplies: ["تحدث مع خدمة العملاء واتساب", "عرض المواد المميزة"],
         showWhatsAppHandoff: true,
       };
     }
@@ -289,32 +288,32 @@ function buildSmartReply(
       (p) => `• ${p.nameAr} — ${formatCurrency(p.retailPrice)} (${p.unit})`
     );
     return {
-      reply: `وجدت لك هذه الخيارات الطازجة من قائمة روابي الفرح:\n${summaryLines.join("\n")}\n\nيمكنك النقر على أي منتج لعرض تفاصيله ومكوناته أو إضافته للسلة مباشرة:`,
+      reply: `وجدت لك هذه المواد والمنتجات المتوفرة في مستودع روز باريس:\n${summaryLines.join("\n")}\n\nيمكنك النقر على أي صنف لعرض مواصفاته الفنية أو إضافته للطلبية مباشرة:`,
       products: top.map(toSuggestion),
-      quickReplies: ["هل يوجد توصيل؟", "أين تقع فروعكم؟", "عرض أصناف أخرى"],
+      quickReplies: ["هل يوجد توصيل؟", "أين يقع معرضكم وساعات العمل؟", "عرض أصناف أخرى"],
       showWhatsAppHandoff: false,
     };
   }
 
   // 8. Asking about the product currently open in /products/[id]
-  if (activePageProduct && hasAnyKeyword(norm, ["هذا", "المنتج", "سعره", "مكوناته", "تفاصيل", "متوفر"])) {
-    const ing = activePageProduct.ingredientsAr ? `\nالمكونات: ${activePageProduct.ingredientsAr}` : "";
-    const allg =
+  if (activePageProduct && hasAnyKeyword(norm, ["هذا", "المنتج", "سعره", "مواصفاته", "مكوناته", "تفاصيل", "متوفر"])) {
+    const spec = activePageProduct.ingredientsAr ? `\nالمواصفات والتركيب: ${activePageProduct.ingredientsAr}` : "";
+    const notes =
       activePageProduct.allergens.length > 0
-        ? `\nمسببات الحساسية: ${activePageProduct.allergens.join("، ")}`
+        ? `\nإرشادات الاستخدام والسلامة: ${activePageProduct.allergens.join("، ")}`
         : "";
     return {
-      reply: `تفاصيل "${activePageProduct.nameAr}":\nالسعر: ${formatCurrency(activePageProduct.retailPrice)} / ${activePageProduct.unit}.${ing}${allg}`,
+      reply: `تفاصيل "${activePageProduct.nameAr}":\nالسعر: ${formatCurrency(activePageProduct.retailPrice)} / ${activePageProduct.unit}.${spec}${notes}`,
       products: [toSuggestion(activePageProduct)],
-      quickReplies: ["أضفه أو اطلب عبر واتساب", "ما هي المنتجات المميزة اليوم؟"],
+      quickReplies: ["أضفه أو اطلب عبر واتساب", "ما هي المواد والمنتجات المميزة؟"],
       showWhatsAppHandoff: false,
     };
   }
 
-  // 9. General menu / featured / categories / prices
+  // 9. General catalog / featured / categories / prices
   if (
     hasAnyKeyword(norm, [
-      "منيو",
+      "كتالوج",
       "قائمه",
       "منتجات",
       "اصناف",
@@ -323,20 +322,28 @@ function buildSmartReply(
       "موسمي",
       "عروض",
       "متوفر",
-      "اكل",
-      "حلويات",
-      "مخبوزات",
-      "خبز",
-      "كرواسون",
+      "مواد",
+      "بناء",
+      "ديكور",
+      "دهان",
+      "دهانات",
+      "جبس",
+      "جبسم",
+      "خشب",
+      "رخام",
+      "عزل",
+      "غراء",
+      "لاصق",
+      "عدد",
     ])
   ) {
     const featured = products.filter((p) => p.isFeatured || p.isSeasonal).slice(0, 4);
     const list = featured.length > 0 ? featured : products.slice(0, 4);
     const catsText = categoryNames.length > 0 ? `الأقسام المتوفرة: ${categoryNames.join("، ")}.` : "";
     return {
-      reply: `نخبز يومياً مجموعة مختارة من أشهى المخبوزات والحلويات الطازجة. ${catsText}\nإليك أبرز الأصناف المقترحة لك الآن:`,
+      reply: `نوفر في روز باريس تشكيلة شاملة من مواد البناء والديكور عالية الجودة. ${catsText}\nإليك أبرز الأصناف الأكثر طلباً الآن:`,
       products: list.map(toSuggestion),
-      quickReplies: ["أين تقع فروعكم؟", "هل يوجد توصيل أو طلبات جملة؟", "تحدث مع خدمة العملاء واتساب"],
+      quickReplies: ["أين يقع معرضكم وساعات العمل؟", "هل يوجد توصيل أو أسعار مقاولين؟", "تحدث مع خدمة العملاء واتساب"],
       showWhatsAppHandoff: false,
     };
   }
@@ -344,7 +351,7 @@ function buildSmartReply(
   // 10. Graceful fallback with WhatsApp handoff
   return {
     reply:
-      "شكراً لتواصلك مع مخابز روابي الفرح! لم أتمكن من تحديد طلبك بدقة في قاعدة المنتجات الحالية، لكن يمكنك سؤالي عن اسم منتج معين (مثل خبز، كرواسون، بقلاوة)، أو عن الفروع والأسعار، أو التواصل مباشرة مع فريقنا عبر الواتساب لخدمتك فوراً:",
+      "شكراً لتواصلك مع روز باريس لمواد البناء والديكور! لم أتمكن من تحديد طلبك بدقة في الكتالوج الحالي، لكن يمكنك سؤالي عن أي صنف (مثل دهان، جبس بورد، بديل خشب، بديل رخام، عزل، غراء)، أو عن المعرض والأسعار، أو التواصل مباشرة مع فريقنا عبر الواتساب:",
     products: products.filter((p) => p.isFeatured).slice(0, 2).map(toSuggestion),
     quickReplies: DEFAULT_QUICK_REPLIES,
     showWhatsAppHandoff: true,
@@ -373,10 +380,10 @@ async function tryGeminiReply(
   }));
 
   const systemPrompt = [
-    "أنت المساعد الذكي الرسمي لمخابز وحلويات روابي الفرح (Rawabi Al-Farah Bakery) في عمّان - الأردن.",
-    "أجب باللغة العربية بأسلوب ودود ومختصر وواضح.",
+    "أنت المساعد الذكي الرسمي لشركة روز باريس لمواد البناء والديكور (Roze Parees Building Materials & Decor) في عمّان - الأردن (أم نوارة — نزول إشارات الغاز).",
+    "أجب باللغة العربية بأسلوب هندسي وتجاري ودود ومختصر وواضح.",
     "استخدم فقط البيانات التالية ولا تخترع أسعاراً أو فروعاً غير موجودة.",
-    `رقم الواتساب المباشر لخدمة العملاء والطلبات الخاصة: +962 7 9808 0411`,
+    `رقم الواتساب المباشر لخدمة العملاء وعروض أسعار المقاولين: 0770585313 (+962 7 7058 5313)`,
     `الفروع المسجلة: ${JSON.stringify(branches)}`,
     `قائمة المنتجات الحية: ${JSON.stringify(catalogLines)}`,
     'أعد الرد بصيغة JSON فقط بدون أي نص خارجه بهذا الشكل: {"reply": "...", "productIds": ["id1"], "quickReplies": ["...", "..."], "showWhatsAppHandoff": false}',
@@ -534,7 +541,7 @@ export async function POST(req: NextRequest) {
 
     return ok(geminiResult ?? smartFallback);
   } catch {
-    return err("تعذر معالجة الرسالة حالياً، يمكنك مراسلتنا مباشرة على واتساب +962 7 9808 0411", 500);
+    return err("تعذر معالجة الرسالة حالياً، يمكنك مراسلتنا مباشرة على واتساب 0770585313", 500);
   }
 }
 

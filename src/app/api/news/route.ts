@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
 
     const enriched = posts.map((p) => ({
       ...p,
-      authorName: p.author?.employee?.nameAr || "إدارة روابي الفرح",
+      authorName: p.author?.employee?.nameAr || "إدارة روز باريس",
       likedByMe: likedPostIds.has(p.id),
     }));
 
@@ -151,7 +151,7 @@ export const POST = withAuth(async (req, ctx) => {
     return ok(
       {
         ...post,
-        authorName: post.author?.employee?.nameAr || "إدارة روابي الفرح",
+        authorName: post.author?.employee?.nameAr || "إدارة روز باريس",
         likedByMe: false,
       },
       201

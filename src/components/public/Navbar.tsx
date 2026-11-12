@@ -28,11 +28,10 @@ export function Navbar() {
   return (
     <>
       <header
-        className={`sticky top-0 z-40 transition-all duration-300 backdrop-blur-md border-b ${
-          isScrolled
-            ? "bg-[#fdfaf5]/95 dark:bg-[#120c06]/95 border-amber-900/15 dark:border-amber-600/30 py-2.5 shadow-md dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
-            : "bg-[#fdfaf5]/85 dark:bg-[#0c0804]/90 border-amber-900/10 dark:border-stone-800/80 py-3.5"
-        }`}
+        className={`sticky top-0 z-40 transition-all duration-300 backdrop-blur-md border-b ${isScrolled
+          ? "bg-[#fdfaf5]/95 dark:bg-[#120c06]/95 border-amber-900/15 dark:border-amber-600/30 py-2.5 shadow-md dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)]"
+          : "bg-[#fdfaf5]/85 dark:bg-[#0c0804]/90 border-amber-900/10 dark:border-stone-800/80 py-3.5"
+          }`}
         dir="rtl"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,8 +41,8 @@ export function Navbar() {
             <Link href="/" className="flex items-center gap-3 no-underline shrink-0 group">
               <div className="w-11 h-11 rounded-xl overflow-hidden border border-amber-500/30 dark:border-amber-500/40 bg-amber-500/5 dark:bg-black/40 flex items-center justify-center p-1 shrink-0 transition-transform group-hover:scale-105">
                 <Image
-                  src="/rwabifarah.png"
-                  alt="شعار مخابز روابي الفرح"
+                  src="/rozeparees.png"
+                  alt="شعار روز باريس لمواد البناء والديكور"
                   width={40}
                   height={40}
                   className="object-contain w-full h-full"
@@ -53,10 +52,10 @@ export function Navbar() {
               </div>
               <div className="flex flex-col leading-tight">
                 <span className="font-extrabold text-base sm:text-lg text-stone-900 dark:text-white transition-colors">
-                  روابي فرح
+                  روز باريس
                 </span>
                 <span className="text-[10px] sm:text-[11px] text-amber-800 dark:text-amber-400/80 tracking-wider font-sans font-medium">
-                  RAWABI AL-FARAH
+                  ROZE PAREES
                 </span>
               </div>
             </Link>
@@ -65,10 +64,10 @@ export function Navbar() {
             <nav className="hide-mobile flex items-center gap-6 text-sm font-semibold">
               {[
                 { href: "/", label: "الرئيسية" },
-                { href: "/menu", label: "قائمة المنتجات" },
+                { href: "/menu", label: "كتالوج المواد" },
                 { href: "/news", label: "آخر الأخبار" },
-                { href: "/#branches", label: "فروعنا" },
-                { href: "/#about", label: "عن المخبز" },
+                { href: "/#branches", label: "المعرض والمستودع" },
+                { href: "/#about", label: "عن الشركة" },
               ].map((item) => (
                 <Link
                   key={item.href}
@@ -82,7 +81,7 @@ export function Navbar() {
                 href="/b2b"
                 className="text-stone-700 hover:text-amber-600 dark:text-stone-300 dark:hover:text-amber-400 transition-colors"
               >
-                توريد للمحلات والمطاعم
+                توريد المقاولين والمشاريع
               </Link>
             </nav>
 
@@ -138,11 +137,11 @@ export function Navbar() {
           >
             {[
               { href: "/", label: "الرئيسية" },
-              { href: "/menu", label: "قائمة المنتجات" },
+              { href: "/menu", label: "كتالوج المواد" },
               { href: "/orders", label: "طلباتي" },
               { href: "/news", label: "آخر الأخبار" },
-              { href: "/b2b", label: "توريد للمحلات والمطاعم" },
-              { href: "/#branches", label: "فروعنا" },
+              { href: "/b2b", label: "توريد المقاولين والمشاريع" },
+              { href: "/#branches", label: "المعرض والمستودع" },
             ].map((item) => (
               <Link
                 key={item.href}

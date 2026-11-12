@@ -201,7 +201,7 @@ export const PATCH = withAuth(async (req: NextRequest, ctx) => {
       customer = await prisma.customer.create({
         data: {
           userId: ctx.userId,
-          nameAr: user?.employee?.nameAr || user?.email.split("@")[0] || "عميل روابي الفرح",
+          nameAr: user?.employee?.nameAr || user?.email.split("@")[0] || "عميل روز باريس",
           phone: user?.employee?.phone ?? null,
           loyaltyAccount: { create: { points: 0, tier: "BRONZE" } },
         },

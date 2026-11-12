@@ -152,7 +152,7 @@ export const POST = withAuth(async (req: NextRequest, ctx) => {
   const passwordPlain =
     data.password && data.password.trim().length >= 6
       ? data.password.trim()
-      : "Rawabi@1234";
+      : "Roze@1234";
   const passwordHash = await bcrypt.hash(passwordPlain, 10);
 
   const startDate = new Date(data.startDate);

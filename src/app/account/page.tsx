@@ -6,7 +6,7 @@ import { AccountClient } from "@/components/public/AccountClient";
 
 export const metadata: Metadata = {
   title: "حسابي",
-  description: "إدارة حسابك، العناوين، ونقاط الولاء في مخابز روابي الفرح",
+  description: "إدارة حسابك، العناوين، ونقاط الولاء في روز باريس لمواد البناء والديكور",
 };
 
 export default async function AccountPage() {

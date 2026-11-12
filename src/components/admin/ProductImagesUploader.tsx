@@ -41,7 +41,7 @@ export function ProductImagesUploader({
     if (!sigRes.ok || !sigJson.success) {
       throw new Error(
         sigJson.error ||
-          "خدمة رفع الصور (Cloudinary) غير مفعلة حالياً. تأكد من إعداد المتغيرات في Vercel."
+        "خدمة رفع الصور (Cloudinary) غير مفعلة حالياً. تأكد من إعداد المتغيرات في Vercel."
       );
     }
 
@@ -177,7 +177,7 @@ export function ProductImagesUploader({
             صور المنتج ({images.length} / {maxImages})
           </p>
           <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
-            ارفع حتى 5 صور مباشرة من جهازك. الصورة الأولى هي صورة الواجهة، وفي حال عدم رفع صور سيظهر شعار روابي فرح تلقائياً.
+            ارفع حتى 5 صور مباشرة من جهازك. الصورة الأولى هي صورة الواجهة، وفي حال عدم رفع صور سيظهر شعار روز باريس تلقائياً.
           </p>
         </div>
 
@@ -215,11 +215,10 @@ export function ProductImagesUploader({
         {images.map((url, idx) => (
           <div
             key={`${url}-${idx}`}
-            className={`group relative aspect-square rounded-2xl overflow-hidden border bg-stone-100 dark:bg-stone-950 ${
-              idx === 0
-                ? "border-amber-500 ring-2 ring-amber-500/30"
-                : "border-stone-200 dark:border-stone-800"
-            }`}
+            className={`group relative aspect-square rounded-2xl overflow-hidden border bg-stone-100 dark:bg-stone-950 ${idx === 0
+              ? "border-amber-500 ring-2 ring-amber-500/30"
+              : "border-stone-200 dark:border-stone-800"
+              }`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -291,7 +290,7 @@ export function ProductImagesUploader({
                 <>
                   <div className="relative w-12 h-12 rounded-xl bg-white dark:bg-stone-900 border border-amber-900/10 p-1.5 shadow-xs">
                     <Image
-                      src="/rwabifarah.png"
+                      src="/rozeparees.png"
                       alt="الصورة الافتراضية"
                       fill
                       className="object-contain p-1"

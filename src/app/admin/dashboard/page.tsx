@@ -4,7 +4,7 @@ import { formatCurrency } from "@/lib/currency";
 import { startOfTodayTZ, endOfTodayTZ } from "@/lib/dates";
 import {
   ShoppingBag, TrendingUp, Package, Users,
-  AlertTriangle, ChefHat, DollarSign, Clock,
+  AlertTriangle, DollarSign, Clock,
 } from "lucide-react";
 import type { Metadata } from "next";
 

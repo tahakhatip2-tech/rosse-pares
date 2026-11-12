@@ -96,7 +96,7 @@ export function BarcodeLabelModal({
               <div className="w-[210px] bg-white text-black rounded-xl border border-stone-300 shadow-sm p-3 text-center space-y-1">
                 {showStoreName && (
                   <p className="text-[10px] font-extrabold tracking-wide text-stone-700">
-                    مخابز روابي الفرح
+                    روز باريس لمواد البناء والديكور
                   </p>
                 )}
                 <p className="text-xs font-black truncate">{product.nameAr}</p>
@@ -169,7 +169,7 @@ export function BarcodeLabelModal({
                   onChange={(e) => setShowStoreName(e.target.checked)}
                   className="w-4 h-4 accent-amber-600"
                 />
-                <span>إظهار اسم المخبز</span>
+                <span>إظهار اسم الشركة</span>
               </label>
 
               <label className="inline-flex items-center gap-2 text-xs font-bold cursor-pointer">
@@ -246,7 +246,7 @@ export function BarcodeLabelModal({
                   >
                     {showStoreName && (
                       <div style={{ fontSize: "7pt", fontWeight: 700 }}>
-                        مخابز روابي الفرح
+                        روز باريس لمواد البناء
                       </div>
                     )}
                     <div
@@ -295,7 +295,7 @@ export function BarcodeLabelModal({
                   >
                     {showStoreName && (
                       <div style={{ fontSize: "8pt", fontWeight: 700, marginBottom: "1mm" }}>
-                        مخابز روابي الفرح
+                        روز باريس لمواد البناء والديكور
                       </div>
                     )}
                     <div style={{ fontSize: "10pt", fontWeight: 800, marginBottom: "2mm" }}>

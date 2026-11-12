@@ -47,15 +47,15 @@ export async function generateMetadata({
   const { id } = await params;
   const result = await getProductWithRelated(id);
   if (!result || !result.product.isActive) {
-    return { title: "المنتج غير موجود | روابي فرح" };
+    return { title: "المنتج غير موجود | روز باريس" };
   }
   const { product } = result;
-  const image = product.images?.[0] || "/rwabifarah.png";
+  const image = product.images?.[0] || "/rozeparees.png";
   return {
-    title: `${product.nameAr} | روابي فرح`,
+    title: `${product.nameAr} | روز باريس`,
     description:
       product.descriptionAr ||
-      `${product.nameAr} طازج يومياً من أفران مخابز روابي الفرح.`,
+      `${product.nameAr} من روز باريس لمواد البناء والديكور في عمّان.`,
     openGraph: {
       title: product.nameAr,
       description: product.descriptionAr || undefined,

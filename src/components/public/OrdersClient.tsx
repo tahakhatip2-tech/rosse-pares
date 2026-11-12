@@ -66,7 +66,7 @@ const STATUS_META: Record<
     step: 2,
   },
   PREPARING: {
-    label: "قيد التجهيز في المخبز",
+    label: "قيد التجهيز في المستودع",
     color: "bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border-indigo-500/30",
     step: 3,
   },
@@ -194,7 +194,7 @@ export function OrdersClient({ isLoggedIn }: { isLoggedIn: boolean }) {
         nameEn: item.nameEn,
         price: item.unitPrice,
         qty: item.qty,
-        image: item.product?.images?.[0] || "/rwabifarah.png",
+        image: item.product?.images?.[0] || "/rozeparees.png",
         unit: item.product?.unit || "piece",
       });
     }
@@ -271,11 +271,10 @@ export function OrdersClient({ isLoggedIn }: { isLoggedIn: boolean }) {
                 key={t.key}
                 type="button"
                 onClick={() => setFilter(t.key)}
-                className={`px-4 py-2 rounded-full text-xs font-bold border transition ${
-                  filter === t.key
-                    ? "bg-amber-600 text-white border-amber-600 shadow-sm"
-                    : "bg-[var(--color-bg-card)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:border-amber-500/40"
-                }`}
+                className={`px-4 py-2 rounded-full text-xs font-bold border transition ${filter === t.key
+                  ? "bg-amber-600 text-white border-amber-600 shadow-sm"
+                  : "bg-[var(--color-bg-card)] text-[var(--color-text-muted)] border-[var(--color-border)] hover:border-amber-500/40"
+                  }`}
               >
                 {t.label}
               </button>
@@ -304,7 +303,7 @@ export function OrdersClient({ isLoggedIn }: { isLoggedIn: boolean }) {
                 لا توجد طلبات في هذا القسم حتى الآن
               </h2>
               <p className="text-xs sm:text-sm text-[var(--color-text-muted)] max-w-md mx-auto">
-                اكتشف تشكيلة مخبوزاتنا الطازجة والحلويات الشرقية الفاخرة واطلب ما تحب بسهولة.
+                اكتشف تشكيلة الدهانات والجبس بورد وبديل الخشب والرخام ومواد العزل واطلب احتياجات مشروعك بسهولة.
               </p>
               <Link
                 href="/menu"
@@ -437,7 +436,7 @@ function OrderCard({
   };
 
   const whatsappText = encodeURIComponent(
-    `مرحباً مخابز روابي الفرح، لدي استفسار بخصوص طلبي رقم: ${order.orderNumber}`
+    `مرحباً روز باريس لمواد البناء والديكور، لدي استفسار بخصوص طلبي رقم: ${order.orderNumber}`
   );
 
   return (
@@ -503,18 +502,16 @@ function OrderCard({
               return (
                 <div key={st.step} className="flex flex-col items-center gap-1.5">
                   <div
-                    className={`h-1.5 w-full rounded-full transition-colors ${
-                      reached
-                        ? "bg-amber-600 dark:bg-amber-500"
-                        : "bg-stone-200 dark:bg-stone-800"
-                    }`}
+                    className={`h-1.5 w-full rounded-full transition-colors ${reached
+                      ? "bg-amber-600 dark:bg-amber-500"
+                      : "bg-stone-200 dark:bg-stone-800"
+                      }`}
                   />
                   <span
-                    className={`text-[10px] sm:text-[11px] font-bold text-center ${
-                      reached
-                        ? "text-amber-700 dark:text-amber-400"
-                        : "text-stone-400 dark:text-stone-500"
-                    }`}
+                    className={`text-[10px] sm:text-[11px] font-bold text-center ${reached
+                      ? "text-amber-700 dark:text-amber-400"
+                      : "text-stone-400 dark:text-stone-500"
+                      }`}
                   >
                     {st.label}
                   </span>
@@ -535,7 +532,7 @@ function OrderCard({
             <div className="flex items-center gap-3 min-w-0">
               <div className="w-11 h-11 rounded-xl overflow-hidden bg-[#f7efe1] dark:bg-stone-800 border border-[var(--color-border)] shrink-0">
                 <img
-                  src={item.product?.images?.[0] || "/rwabifarah.png"}
+                  src={item.product?.images?.[0] || "/rozeparees.png"}
                   alt={item.nameAr}
                   className="w-full h-full object-cover"
                 />
@@ -565,11 +562,10 @@ function OrderCard({
           <button
             type="button"
             onClick={onReorder}
-            className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-extrabold transition ${
-              reordered
-                ? "bg-emerald-600 text-white"
-                : "bg-amber-600 hover:bg-amber-700 text-white shadow-xs"
-            }`}
+            className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-extrabold transition ${reordered
+              ? "bg-emerald-600 text-white"
+              : "bg-amber-600 hover:bg-amber-700 text-white shadow-xs"
+              }`}
           >
             <ShoppingBag className="w-3.5 h-3.5" />
             <span>{reordered ? "✓ أُضيفت الأصناف للسلة" : "إعادة الطلب"}</span>
@@ -586,7 +582,7 @@ function OrderCard({
         </div>
 
         <a
-          href={`https://wa.me/962798080411?text=${whatsappText}`}
+          href={`https://wa.me/962770585313?text=${whatsappText}`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-emerald-500/40 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-500/10 text-xs font-bold transition"

@@ -10,7 +10,7 @@ import {
   FileText,
   PenSquare,
   RotateCcw,
-  Wheat,
+  Layers,
 } from "lucide-react";
 import {
   NewsPostCard,
@@ -116,10 +116,10 @@ export function NewsFeedClient({
             <span>آخر الأخبار والعروض والمقالات</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-stone-900 dark:text-white tracking-tight">
-            مجتمع وأخبار روابي الفرح
+            مجتمع وأخبار روز باريس
           </h1>
           <p className="text-sm sm:text-base text-stone-600 dark:text-stone-400 max-w-xl mx-auto">
-            تابع أحدث المخبوزات الموسمية، كواليس الفرن اليومية، والعروض الخاصة من مخابز وحلويات روابي الفرح وشاركنا رأيك.
+            تابع أحدث تشكيلات الديكور، الدهانات، توريدات المشاريع، والعروض الخاصة من روز باريس لمواد البناء والديكور وشاركنا رأيك.
           </p>
         </div>
       </section>
@@ -138,7 +138,7 @@ export function NewsFeedClient({
                   مرحباً بالإدارة — أنشئ منشوراً جديداً
                 </p>
                 <p className="text-xs text-stone-500 dark:text-stone-400">
-                  انشر صورة، فيديو، أو مقالة لتصل لجميع عملاء روابي الفرح
+                  انشر صورة، فيديو، أو مقالة لتصل لجميع عملاء ومقاولي روز باريس
                 </p>
               </div>
             </div>
@@ -201,13 +201,13 @@ export function NewsFeedClient({
         ) : posts.length === 0 ? (
           <div className="p-12 rounded-2xl bg-white dark:bg-stone-900/70 border border-stone-200 dark:border-stone-800 text-center space-y-3">
             <div className="w-14 h-14 rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto">
-              <Wheat className="w-7 h-7" />
+              <Layers className="w-7 h-7" />
             </div>
             <h3 className="font-extrabold text-base text-stone-900 dark:text-white">
               لا توجد منشورات في هذا القسم حالياً
             </h3>
             <p className="text-xs text-stone-500 dark:text-stone-400 max-w-sm mx-auto">
-              ترقبوا أشهى الأخبار والعروض والوصفات الطازجة من أفران روابي الفرح قريباً.
+              ترقبوا أحدث العروض والأخبار والمشاريع الهندسية من روز باريس قريباً.
             </p>
           </div>
         ) : (

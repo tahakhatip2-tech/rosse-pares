@@ -31,7 +31,7 @@ export interface PublicProductCardItem {
  */
 export function extractTwoWords(text?: string | null): string {
   const cleaned = text?.trim();
-  if (!cleaned) return "مخبوزات طازجة";
+  if (!cleaned) return "مواد بناء وديكور";
   const words = cleaned.split(/\s+/).filter(Boolean);
   if (words.length <= 2) return words.join(" ");
   return `${words.slice(0, 2).join(" ")}...`;
@@ -47,13 +47,13 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const validImages = (product.images || []).filter(Boolean);
   const hasCustomImage = validImages.length > 0;
-  const coverImage = hasCustomImage ? validImages[0] : "/rwabifarah.png";
+  const coverImage = hasCustomImage ? validImages[0] : "/rozeparees.png";
   const detailsHref = `/products/${product.id}`;
   const twoWordsSummary = extractTwoWords(product.descriptionAr);
 
   const secondaryTag =
     product.badgeLabel ||
-    (product.isSeasonal ? "موسمي" : product.isFeatured ? "مميز" : "طازج يومياً");
+    (product.isSeasonal ? "عرض خاص" : product.isFeatured ? "الأكثر طلباً" : "متوفر بالمستودع");
 
   const handleAdd = () => {
     addItem({
@@ -95,7 +95,7 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Top Floating Tags (Category + Highlight Tag) */}
         <div className="absolute top-2.5 inset-x-2.5 flex items-center justify-between gap-1.5 z-10">
           <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-white/90 dark:bg-stone-950/85 backdrop-blur-xs text-[10px] sm:text-[11px] font-bold text-stone-800 dark:text-amber-300 shadow-xs truncate max-w-[58%]">
-            {product.category?.nameAr || "روابي الفرح"}
+            {product.category?.nameAr || "روز باريس"}
           </span>
 
           <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-amber-600/95 text-white text-[9px] sm:text-[10px] font-bold shadow-xs shrink-0">

@@ -36,7 +36,7 @@ type TabKey = "persona" | "ai" | "permissions" | "prompts" | "audit";
 
 const ROLE_LABELS: Record<string, string> = {
   SUPER_ADMIN: "مدير النظام (Super Admin)",
-  BUSINESS_OWNER: "صاحب المخبزة",
+  BUSINESS_OWNER: "صاحب الشركة",
   BRANCH_MANAGER: "مدير الفرع",
   CASHIER: "الكاشير",
   WAREHOUSE_STAFF: "موظف المستودع",
@@ -68,22 +68,22 @@ const COMMAND_SCOPE_LABELS: Array<{
   {
     key: "products",
     label: "أوامر تفعيل/إيقاف المنتجات وتعديل الأسعار",
-    example: "مثال: عدّل سعر كرواسون إلى 1.50 | أوقف منتج ...",
+    example: "مثال: عدّل سعر دهان إلى 34.50 | أوقف منتج ...",
   },
   {
     key: "inventory",
-    label: "أوامر تعديل كميات المخزون (مع قيد StockMovement)",
-    example: "مثال: زد مخزون كرواسون بمقدار 25",
+    label: "أوامر تعديل كميات المستودع (مع قيد StockMovement)",
+    example: "مثال: زد مخزون جبس بورد بمقدار 25",
   },
   {
     key: "cms",
     label: "أوامر نشر الأخبار والإعلانات",
-    example: "مثال: انشر خبر: عرض خاص على البقلاوة اليوم",
+    example: "مثال: انشر خبر: وصول دفعة جديدة من بديل الرخام اليوم",
   },
   {
     key: "expenses",
     label: "أوامر تسجيل المصاريف التشغيلية",
-    example: "مثال: سجّل مصروف 35 صيانة أفران",
+    example: "مثال: سجّل مصروف 35 صيانة مستودع",
   },
 ];
 

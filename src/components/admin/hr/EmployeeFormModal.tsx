@@ -348,7 +348,7 @@ export function EmployeeFormModal({
                   disabled={isEdit}
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  placeholder="staff@rawabifarah.com"
+                  placeholder="staff@rozeparees.com"
                   className="w-full px-3 py-2 rounded-xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-stone-900 dark:text-stone-100 disabled:opacity-60 font-mono text-right focus:outline-none focus:border-amber-500"
                 />
               </div>
@@ -356,7 +356,7 @@ export function EmployeeFormModal({
               {!isEdit && (
                 <div>
                   <label className="block font-semibold text-stone-700 dark:text-stone-300 mb-1">
-                    كلمة المرور المبدئية (الافتراضي: Rawabi@1234)
+                    كلمة المرور المبدئية (الافتراضي: Roze@1234)
                   </label>
                   <input
                     type="password"

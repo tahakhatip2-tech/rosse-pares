@@ -7,10 +7,10 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
-  Croissant,
+  Package,
   Boxes,
   ShoppingCart,
-  ChefHat,
+  Hammer,
   ShoppingBag,
   Users,
   UserCog,
@@ -56,7 +56,7 @@ interface NavGroup {
 
 const ROLE_LABELS: Record<string, string> = {
   SUPER_ADMIN: "مدير النظام",
-  BUSINESS_OWNER: "صاحب المخبزة",
+  BUSINESS_OWNER: "صاحب الشركة",
   BRANCH_MANAGER: "مدير الفرع",
   CASHIER: "كاشير",
   WAREHOUSE_STAFF: "موظف المستودع",
@@ -70,7 +70,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/admin/dashboard", label: "لوحة التحكم", icon: LayoutDashboard },
       { href: "/admin/sales", label: "المبيعات والطلبات", icon: ShoppingBag },
-      { href: "/admin/products", label: "المنتجات والأصناف", icon: Croissant },
+      { href: "/admin/products", label: "المنتجات والأصناف", icon: Package },
       { href: "/admin/inventory", label: "المخزون والمواد", icon: Boxes },
     ],
   },
@@ -78,7 +78,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: "الإنتاج وسلاسل الإمداد",
     items: [
       { href: "/admin/procurement", label: "المشتريات والموردين", icon: ShoppingCart, soon: true },
-      { href: "/admin/production", label: "الإنتاج والوصفات", icon: ChefHat, soon: true },
+      { href: "/admin/production", label: "التجهيز والتجميع", icon: Hammer, soon: true },
     ],
   },
   {
@@ -133,8 +133,8 @@ export function AdminShell({ children, user }: AdminShellProps) {
           >
             <div className="relative w-10 h-10 rounded-xl bg-stone-900 border border-amber-500/30 p-1 flex items-center justify-center shrink-0 shadow-md shadow-amber-950/50">
               <Image
-                src="/rwabifarah.png"
-                alt="شعار روابي الفرح"
+                src="/rozeparees.png"
+                alt="شعار روز باريس"
                 width={36}
                 height={36}
                 className="object-contain w-full h-full"
@@ -143,7 +143,7 @@ export function AdminShell({ children, user }: AdminShellProps) {
             {!isCompact && (
               <div className="min-w-0">
                 <p className="text-white font-extrabold text-sm tracking-tight truncate">
-                  روابي الفرح
+                  روز باريس
                 </p>
                 <p className="text-amber-400/80 text-[11px] font-medium truncate">
                   لوحة الإدارة المركزية
@@ -382,7 +382,7 @@ export function AdminShell({ children, user }: AdminShellProps) {
             </button>
             <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-[var(--color-text-muted)]">
               <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>نظام إدارة المخبزة — متابعة مباشرة</span>
+              <span>نظام إدارة روز باريس — متابعة مباشرة</span>
             </div>
           </div>
 

@@ -52,7 +52,7 @@ interface BootstrapResponse {
   pulse?: ExecutivePulse;
 }
 
-const STORAGE_KEY = "rf_admin_secretary_chat_v1";
+const STORAGE_KEY = "rp_admin_secretary_chat_v1";
 
 function downloadCsvTable(table: SecretaryTable) {
   const escapeCell = (val: string) => `"${String(val).replace(/"/g, '""')}"`;
@@ -65,7 +65,7 @@ function downloadCsvTable(table: SecretaryTable) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `rawabi-report-${Date.now()}.csv`;
+  a.download = `rozeparees-report-${Date.now()}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -224,7 +224,7 @@ export function AdminSecretaryWidget({ userRole }: { userRole?: string | null })
     if (messages.length === 0) {
       if (boot.settings?.autoBriefingOnOpen && !autoBriefTriggeredRef.current) {
         autoBriefTriggeredRef.current = true;
-        sendQuery("أعطني الملخص التنفيذي الشامل لأداء المخبز اليوم والشهر");
+        sendQuery("أعطني الملخص التنفيذي الشامل لأداء شركة روز باريس اليوم والشهر");
       } else {
         setMessages([
           {
@@ -670,7 +670,7 @@ export function AdminSecretaryWidget({ userRole }: { userRole?: string | null })
               onChange={(e) => setInput(e.target.value)}
               placeholder={
                 boot.settings?.allowCommands
-                  ? "اطلب تقريراً أو أعطِ أمراً (مثلاً: زد مخزون كرواسون 20)..."
+                  ? "اطلب تقريراً أو أعطِ أمراً (مثلاً: زد مخزون جبس بورد 20)..."
                   : "اسأل عن المبيعات، المخزون، الأرباح أو الفروع..."
               }
               disabled={isLoading}

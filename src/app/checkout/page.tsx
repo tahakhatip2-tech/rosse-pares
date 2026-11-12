@@ -101,7 +101,7 @@ export default function CheckoutPage() {
                 تم تأكيد طلبك بنجاح!
               </h1>
               <p className="text-xs text-stone-600 dark:text-stone-400">
-                شكراً لاختيارك روابي فرح. بدأ خبازونا بتجهيز طلبك بكل عناية.
+                شكراً لاختيارك روز باريس. بدأ فريق المستودع بتجهيز طلبيتك بكل عناية.
               </p>
             </div>
 
@@ -151,13 +151,13 @@ export default function CheckoutPage() {
             <ShoppingBag className="w-16 h-16 mx-auto text-stone-400 dark:text-stone-600" />
             <h2 className="text-xl font-bold text-stone-900 dark:text-white">سلة المشتريات فارغة</h2>
             <p className="text-xs text-stone-500 dark:text-stone-400">
-              لم تقم بإضافة أي أصناف بعد. تصفح قائمتنا اللذيذة وأضف ما تشتهي.
+              لم تقم بإضافة أي أصناف بعد. تصفح كتالوج مواد البناء والديكور وأضف ما تحتاجه لمشروعك.
             </p>
             <Link
               href="/menu"
               className="inline-block px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs transition"
             >
-              استعراض المخبوزات
+              استعراض كتالوج المواد
             </Link>
           </div>
         ) : (
@@ -266,13 +266,13 @@ export default function CheckoutPage() {
 
                 <div>
                   <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-                    ملاحظات خاصة للفرن أو التوصيل (اختياري)
+                    ملاحظات خاصة للمستودع أو التوصيل (اختياري)
                   </label>
                   <textarea
                     rows={2}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="مثال: الخبز محمص زيادة، الرنين على الجرس عند الوصول..."
+                    placeholder="مثال: رقم كود اللون المطلوب، موقع الورشة، أو التواصل قبل الوصول..."
                     className="w-full px-4 py-2 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-xs text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:border-amber-500 transition"
                   />
                 </div>

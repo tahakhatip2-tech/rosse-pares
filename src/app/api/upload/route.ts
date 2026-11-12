@@ -3,8 +3,8 @@ import { withAuth, ok, err, type ApiContext } from "@/lib/api";
 import { hasPermission, PERMISSIONS } from "@/lib/permissions";
 
 const ALLOWED_FOLDERS: Record<string, string> = {
-  news: "rawabifarah/news",
-  products: "rawabifarah/products",
+  news: "rozeparees/news",
+  products: "rozeparees/products",
 };
 
 function resolveUploadFolder(raw?: string | null) {

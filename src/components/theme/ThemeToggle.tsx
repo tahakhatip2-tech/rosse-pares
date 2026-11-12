@@ -10,7 +10,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   useEffect(() => {
     setMounted(true);
     // Check saved theme or html class
-    const saved = localStorage.getItem("bakery_theme") as "light" | "dark" | null;
+    const saved = localStorage.getItem("rp_theme") as "light" | "dark" | null;
     if (saved) {
       setTheme(saved);
       applyTheme(saved);
@@ -35,7 +35,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   const toggleTheme = () => {
     const next = theme === "light" ? "dark" : "light";
     setTheme(next);
-    localStorage.setItem("bakery_theme", next);
+    localStorage.setItem("rp_theme", next);
     applyTheme(next);
   };
 

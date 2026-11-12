@@ -396,7 +396,7 @@ export function ShiftsTab({ employees }: ShiftsTabProps) {
                   type="text"
                   value={form.notes}
                   onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                  placeholder="مثال: تغطية خط الحلويات..."
+                  placeholder="مثال: تغطية قسم الدهانات والمستودع..."
                   className="w-full px-3 py-2 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700"
                 />
               </div>

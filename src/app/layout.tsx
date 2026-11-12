@@ -27,25 +27,36 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "روابي فرح | Rawabi Al-Farah",
-    template: "%s | روابي فرح",
+    default: "روز باريس لمواد البناء والديكور | Roze Parees",
+    template: "%s | روز باريس",
   },
   description:
-    "روابي فرح — متجر إلكتروني، توريد للمحلات والمطاعم، ونقاط بيع المخبوزات والحلويات الطازجة في عمّان، الأردن.",
-  keywords: ["روابي فرح", "Rawabi Al-Farah", "حلويات", "خبز", "عمّان", "الأردن"],
-  authors: [{ name: "Rawabi Al-Farah" }],
-  creator: "Rawabi Al-Farah",
+    "روز باريس لمواد البناء والديكور — متجر إلكتروني، توريد للمقاولين والمشاريع، ونقاط بيع الدهانات والجبس بورد وبديل الخشب والرخام في عمّان، الأردن.",
+  keywords: [
+    "روز باريس",
+    "Roze Parees",
+    "مواد بناء",
+    "ديكور",
+    "دهانات",
+    "جبس بورد",
+    "بديل الخشب",
+    "بديل الرخام",
+    "عمّان",
+    "الأردن",
+  ],
+  authors: [{ name: "Roze Parees" }],
+  creator: "Roze Parees",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
   openGraph: {
     type: "website",
     locale: "ar_JO",
     alternateLocale: "en_US",
-    siteName: "روابي الفرح",
+    siteName: "روز باريس لمواد البناء والديكور",
   },
   icons: {
-    icon: "/rwabifarah.png",
-    shortcut: "/rwabifarah.png",
-    apple: "/rwabifarah.png",
+    icon: "/rozeparees.png",
+    shortcut: "/rozeparees.png",
+    apple: "/rozeparees.png",
   },
   robots: {
     index: true,
@@ -69,7 +80,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                var theme = localStorage.getItem('bakery_theme') || 'light';
+                var theme = localStorage.getItem('rp_theme') || 'light';
                 if (theme === 'dark') {
                   document.documentElement.classList.add('dark');
                   document.documentElement.setAttribute('data-theme', 'dark');

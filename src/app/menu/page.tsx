@@ -8,9 +8,9 @@ import { PublicProductCardItem } from "@/components/public/ProductCard";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "قائمة المخبوزات والحلويات | روابي فرح",
+  title: "كتالوج مواد البناء والديكور | روز باريس",
   description:
-    "تصفح جميع مخبوزات وحلويات روابي الفرح الطازجة يومياً في عمّان واطلب أونلاين.",
+    "تصفح جميع منتجات روز باريس لمواد البناء والديكور من الدهانات والجبس بورد وبديل الخشب والرخام في عمّان واطلب أونلاين.",
 };
 
 export default async function MenuPage({

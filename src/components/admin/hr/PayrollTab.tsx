@@ -135,7 +135,7 @@ export function PayrollTab() {
           صلاحية مقيدة على الإدارة المالية
         </h4>
         <p className="text-xs text-stone-500">
-          عرض واعتماد مسيرات الرواتب متاح لصاحب المخبز ومدير النظام فقط (`payroll:view`).
+          عرض واعتماد مسيرات الرواتب متاح لصاحب الشركة ومدير النظام فقط (`payroll:view`).
         </p>
       </div>
     );
@@ -336,9 +336,8 @@ export function PayrollTab() {
 
                       <td className="py-3 px-4">
                         <span
-                          className={`inline-block px-2.5 py-0.5 rounded-full border text-[10px] font-bold ${
-                            meta?.badgeClass || ""
-                          }`}
+                          className={`inline-block px-2.5 py-0.5 rounded-full border text-[10px] font-bold ${meta?.badgeClass || ""
+                            }`}
                         >
                           {meta?.label || r.status}
                         </span>
@@ -505,7 +504,7 @@ export function PayrollTab() {
           <div className="w-full max-w-md bg-white text-stone-900 rounded-2xl p-6 space-y-4 shadow-2xl text-xs">
             <div className="text-center border-b border-dashed border-stone-300 pb-3 space-y-1">
               <h2 className="text-base font-black text-stone-950">
-                مخابز روابي الفرح
+                روز باريس لمواد البناء والديكور
               </h2>
               <p className="text-[11px] font-bold text-stone-600">
                 قسيمة راتب شهر {printSlip.month} / {printSlip.year}

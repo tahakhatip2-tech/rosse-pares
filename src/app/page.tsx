@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {
-  Wheat,
+  Layers,
   ShoppingBag,
   Sparkles,
   Clock,
@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   MapPin,
   Phone,
+  Award,
 } from "lucide-react";
 import { prisma } from "@/lib/db";
 import { Navbar } from "@/components/public/Navbar";
@@ -20,38 +21,38 @@ export const dynamic = "force-dynamic";
 
 const CATEGORIES = [
   {
-    title: "الخبز البلدي والأوروبي",
-    desc: "بيتا، طابون، باغيت، وتوست صحي بنخالة القمح",
-    icon: "🥖",
-    slug: "bread",
+    title: "الدهانات ومواد الطلاء",
+    desc: "دهانات مائية وزيتية فاخرة، معجون داخلي وخارجي، وبرايمر تأسيس",
+    icon: "🎨",
+    slug: "paints",
   },
   {
-    title: "المعجنات والفطائر",
-    desc: "كرواسون، مناقيش أفران، وسمبوسك بحشوات طازجة",
-    icon: "🥐",
-    slug: "pastries",
+    title: "الجبس بورد والديكور",
+    desc: "ألواح جبس بورد عادي ومقاوم للرطوبة والحريق مع مقاطع الأوميغا والزوايا",
+    icon: "🏗️",
+    slug: "gypsum",
   },
   {
-    title: "الحلويات الشرقية",
-    desc: "بقلاوة، معمول، وكنافة بالسمن البلدي",
-    icon: "🍯",
-    slug: "oriental-sweets",
+    title: "بديل الخشب والرخام",
+    desc: "ألواح WPC الجدارية الفاخرة وشرائح PVC بديل الرخام بأحدث التصاميم",
+    icon: "🪵",
+    slug: "wood-marble",
   },
   {
-    title: "الكيك والمناسبات",
-    desc: "كيكات فاخرة مخصصة للحفلات والأعياد",
-    icon: "🎂",
-    slug: "cakes",
+    title: "العزل والمواد الإنشائية",
+    desc: "رولات ودهانات العزل المائي والحراري، وغراء البورسلان والسيراميك",
+    icon: "🛡️",
+    slug: "insulation",
   },
   {
-    title: "البتيفور والمقرمشات",
-    desc: "بسكويت، شابورة، وبتيفور فرنسي للمساء",
-    icon: "🍪",
-    slug: "cookies",
+    title: "العدد والأدوات الهندسية",
+    desc: "أدوات الدهان والديكور، مساطر الليزر، وعدد الورش والمقاولين",
+    icon: "🛠️",
+    slug: "tools",
   },
   {
-    title: "تموين المقاهي والمطاعم",
-    desc: "أسعار جملة وتوريد يومي مجدول للشركات",
+    title: "توريد المقاولين والمشاريع",
+    desc: "أسعار جملة خاصة وتوريد مجدول لمواقع البناء وشركات المقاولات",
     icon: "📦",
     slug: "wholesale",
   },
@@ -89,13 +90,13 @@ export default async function HomePage() {
     <div className="min-h-screen bg-[#fdfaf5] text-stone-900 dark:bg-stone-950 dark:text-stone-100 flex flex-col font-sans transition-colors duration-300">
       <Navbar />
 
-      {/* ── 1. Hero Section (Majestic Banner with Full Bakery Photo) ── */}
+      {/* ── 1. Hero Section (Showroom & Architectural Building Materials Banner) ── */}
       <section className="relative overflow-hidden py-20 sm:py-28 lg:py-36 border-b border-amber-900/10 dark:border-stone-800 transition-colors">
         <div className="absolute inset-0 z-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/hero-home.jpg"
-            alt="روابي فرح"
+            alt="روز باريس لمواد البناء والديكور"
             className="w-full h-full object-cover object-center brightness-[0.35] dark:brightness-[0.22] scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/55 to-black/75 dark:from-stone-950 dark:via-stone-950/80 dark:to-black/90" />
@@ -104,19 +105,19 @@ export default async function HomePage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-6 text-white">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/25 border border-amber-400/35 text-amber-300 text-xs font-bold backdrop-blur-md shadow-sm">
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>مخبوز طازج على مدار الساعة في عمّان</span>
+            <span>جودة معمارية ومواد بناء معتمدة في عمّان</span>
           </div>
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight drop-shadow-md">
-            رائحة الخَبز الأصيل...
+            فخامة التشطيبات الحديثة...
             <br />
             <span className="bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
-              وجودة المذاق الرفيع
+              ومتانة مواد البناء الأصيلة
             </span>
           </h1>
 
           <p className="text-sm sm:text-base lg:text-lg text-stone-200 max-w-2xl mx-auto leading-relaxed drop-shadow-sm">
-            في <span className="text-amber-300 font-bold">روابي فرح</span> نجمع بين عراقة التخمير الطبيعي وأحدث التقنيات لنقدم يومياً أشهى المخبوزات، الفطائر الذهبية، والحلويات الفاخرة.
+            في <span className="text-amber-300 font-bold">روز باريس لمواد البناء والديكور</span> نجمع بين أحدث صيحات الديكور الداخلي من بديل الخشب والرخام والدهانات، وأقوى المواد الإنشائية ومواد العزل.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2">
@@ -125,7 +126,7 @@ export default async function HomePage() {
               className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm shadow-lg shadow-amber-600/35 flex items-center justify-center gap-2 transition hover:-translate-y-0.5 text-center"
             >
               <ShoppingBag className="w-4 h-4" />
-              <span>اطلب الآن أونلاين</span>
+              <span>تصفح الكتالوج واطلب الآن</span>
             </Link>
 
             <Link
@@ -133,46 +134,46 @@ export default async function HomePage() {
               className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/25 backdrop-blur-md font-bold text-sm flex items-center justify-center gap-2 transition hover:-translate-y-0.5 shadow-sm text-center"
             >
               <Building2 className="w-4 h-4 text-amber-400" />
-              <span>توريد المحلات والمطاعم</span>
+              <span>توريد المقاولين والمشاريع</span>
             </Link>
           </div>
 
           <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/15 max-w-lg mx-auto">
             <div className="flex flex-col items-center">
-              <span className="text-xl sm:text-3xl font-black text-amber-400 font-mono">+50</span>
-              <span className="text-[11px] sm:text-xs text-stone-300">صنف مخبوز يومياً</span>
+              <span className="text-xl sm:text-3xl font-black text-amber-400 font-mono">+200</span>
+              <span className="text-[11px] sm:text-xs text-stone-300">صنف بناء وديكور</span>
             </div>
             <div className="flex flex-col items-center">
               <span className="text-xl sm:text-3xl font-black text-amber-400 font-mono">100%</span>
-              <span className="text-[11px] sm:text-xs text-stone-300">مكونات طبيعية</span>
+              <span className="text-[11px] sm:text-xs text-stone-300">مطابق للمواصفات</span>
             </div>
             <div className="flex flex-col items-center">
-              <span className="text-xl sm:text-3xl font-black text-amber-400 font-mono">30 دقيقة</span>
-              <span className="text-[11px] sm:text-xs text-stone-300">متوسط التوصيل</span>
+              <span className="text-xl sm:text-3xl font-black text-amber-400 font-mono">فوري</span>
+              <span className="text-[11px] sm:text-xs text-stone-300">تجهيز من المستودع</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── 2. Live Oven Batch Section ── */}
+      {/* ── 2. Ready Warehouse Dispatch Section ── */}
       <section className="py-12 lg:py-16 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 transition-colors">
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-stone-200 dark:border-stone-800">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400">
-              <Wheat className="w-5 h-5" />
+              <Layers className="w-5 h-5" />
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl font-black text-stone-900 dark:text-white">
-                الدفعة الحالية من الفرن
+                الأصناف الأكثر طلباً في المستودع
               </h2>
               <p className="text-xs text-stone-500 dark:text-stone-400">
-                مخبوزات طازجة خرجت للتو من أفران الحجر
+                متوفرة للتسليم الفوري من مستودع أم نوارة المركزي
               </p>
             </div>
           </div>
           <span className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20 shrink-0">
             <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-ping" />
-            خَبز طازج الآن
+            جاهز للتحميل الآن
           </span>
         </div>
 
@@ -187,7 +188,7 @@ export default async function HomePage() {
             href="/menu"
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-amber-700 dark:text-amber-400 hover:text-amber-600 transition"
           >
-            <span>عرض كافة منتجات المتجر وأسعارها (+50 صنف)</span>
+            <span>عرض كافة مواد البناء والديكور وأسعارها</span>
             <ChevronLeft className="w-4 h-4" />
           </Link>
         </div>
@@ -198,10 +199,10 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto space-y-2 mb-12">
             <h2 className="text-3xl font-extrabold text-stone-900 dark:text-white transition-colors">
-              تصنيفات منتجاتنا
+              أقسام ومجالات روز باريس
             </h2>
             <p className="text-sm text-stone-600 dark:text-stone-400 transition-colors">
-              تصفح التشكيلة الغنية من المخبوزات والحلويات المحضرة يومياً
+              كل ما تحتاجه لمشروعك من التأسيس والعزل حتى التشطيب والديكور الفاخر
             </p>
           </div>
 
@@ -236,10 +237,10 @@ export default async function HomePage() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
           <div>
             <span className="text-xs font-bold text-amber-600 dark:text-amber-500 uppercase tracking-wider">
-              مختارات اليوم
+              مختارات المعرض
             </span>
             <h2 className="text-3xl font-black text-stone-900 dark:text-white mt-1 transition-colors">
-              أشهر مخبوزات روابي فرح
+              أبرز منتجات روز باريس
             </h2>
           </div>
           <Link
@@ -266,23 +267,23 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto space-y-2 mb-14">
             <h2 className="text-3xl font-extrabold text-stone-900 dark:text-white transition-colors">
-              لماذا روابي فرح؟
+              لماذا روز باريس؟
             </h2>
             <p className="text-sm text-stone-600 dark:text-stone-400 transition-colors">
-              نلتزم بأعلى معايير الحرفية الغذائية لتقديم طعم لا يُنسى
+              نلتزم بتوريد مواد بناء وديكور موثوقة تجمع بين المتانة والجمال المعماري
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="p-6 rounded-2xl bg-white dark:bg-stone-950/60 border border-stone-200/90 dark:border-stone-800 text-center space-y-3 shadow-sm">
               <div className="w-12 h-12 rounded-xl bg-amber-500/10 mx-auto flex items-center justify-center text-amber-600 dark:text-amber-400">
-                <Wheat className="w-6 h-6" />
+                <Award className="w-6 h-6" />
               </div>
               <h3 className="font-bold text-stone-900 dark:text-white text-base">
-                دقيق ومكونات نقية
+                مواصفات هندسية معتمدة
               </h3>
               <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
-                نستخدم دقيق القمح المختار بدون محسنات كيميائية ضارة، وزبدة طبيعية نقية.
+                نختار مواد الطلاء والجبس والعزل والديكور من مصانع عالمية وإقليمية موثوقة.
               </p>
             </div>
 
@@ -291,10 +292,10 @@ export default async function HomePage() {
                 <Clock className="w-6 h-6" />
               </div>
               <h3 className="font-bold text-stone-900 dark:text-white text-base">
-                خَبز طازج 24/7
+                تجهيز فوري للطلبيات
               </h3>
               <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
-                أفراننا تعمل على مدار اليوم لتصلكم المخبوزات ساخنة فور خروجها من الفرن.
+                مستودعنا في أم نوارة يضمن توفر الكميات الكبيرة للمقاولين والورش دون تأخير.
               </p>
             </div>
 
@@ -303,10 +304,10 @@ export default async function HomePage() {
                 <Truck className="w-6 h-6" />
               </div>
               <h3 className="font-bold text-stone-900 dark:text-white text-base">
-                أسطول توصيل سريع
+                توصيل لمواقع العمل
               </h3>
               <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
-                سيارات توصيل مجهزة حرارياً للحفاظ على قرمشة وطراوة المخبوزات لكافة مناطق عمّان.
+                خدمة نقل وشحن سريعة لمشاريع البناء والورش في كافة مناطق عمّان والمحافظات.
               </p>
             </div>
 
@@ -315,10 +316,10 @@ export default async function HomePage() {
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <h3 className="font-bold text-stone-900 dark:text-white text-base">
-                سلامة وجودة الغذاء
+                ضمان الجودة والفوترة
               </h3>
               <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
-                فريق ضبط جودة متخصص ورقابة صارمة على معايير النظافة والتعقيم في كل مرحلة.
+                فواتير ضريبية رسمية (ISTD 16%) واستشارة فنية لاختيار المواد الأنسب لمشروعك.
               </p>
             </div>
           </div>
@@ -330,15 +331,15 @@ export default async function HomePage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold border border-amber-400/30">
             <Building2 className="w-4 h-4" />
-            <span>بوابة التوريد التجاري B2B</span>
+            <span>بوابة المقاولين والشركات B2B</span>
           </div>
 
           <h2 className="text-3xl sm:text-4xl font-black text-white">
-            شريك التوريد الموثوق لمقهاك وفندقك في الأردن
+            شريك التوريد الموثوق لمشاريعك الإنشائية في الأردن
           </h2>
 
           <p className="text-amber-100/90 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-            نقدم حلول توريد يومية مجدولة للكرواسون، خبز البرغر والبريوش، والحلويات بأسعار جملة منافسة، مع كشوفات حساب دقيقة وفواتير ضريبية نظامية.
+            نقدم حلول توريد متكاملة للمقاولين، المهندسين، وشركات الديكور للجبس بورد والدهانات وبديل الخشب ومواد العزل بأسعار جملة منافسة وفواتير ضريبية نظامية.
           </p>
 
           <div className="pt-2">
@@ -346,7 +347,7 @@ export default async function HomePage() {
               href="/b2b"
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-white hover:bg-amber-50 text-amber-950 font-extrabold text-sm shadow-xl transition hover:-translate-y-0.5"
             >
-              <span>طلب حساب تاجر وعروض أسعار الجملة</span>
+              <span>طلب حساب مقاول وعروض أسعار الجملة</span>
               <ChevronLeft className="w-4 h-4" />
             </Link>
           </div>
@@ -357,10 +358,10 @@ export default async function HomePage() {
       <section id="branches" className="py-16 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto space-y-2 mb-12">
           <h2 className="text-3xl font-extrabold text-stone-900 dark:text-white transition-colors">
-            فروعنا ومراكز الخدمة
+            المعرض والمستودع الرئيسي
           </h2>
           <p className="text-sm text-stone-600 dark:text-stone-400 transition-colors">
-            يسعدنا استقبالكم في فروعنا في عمّان
+            يسعدنا استقبالكم لمعاينة العينات وطلب الكميات في عمّان
           </p>
         </div>
 
@@ -368,7 +369,7 @@ export default async function HomePage() {
           <div className="p-6 rounded-2xl bg-white dark:bg-stone-900/80 border border-stone-200/90 dark:border-stone-800 space-y-4 shadow-sm">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-lg text-stone-900 dark:text-white">
-                الفرع الرئيسي — الرابية
+                المعرض الرئيسي — أم نوارة
               </h3>
               <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 text-xs font-bold border border-emerald-500/20">
                 مفتوح الآن
@@ -377,15 +378,15 @@ export default async function HomePage() {
             <div className="space-y-2 text-xs text-stone-600 dark:text-stone-300">
               <p className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-amber-600 dark:text-amber-500 shrink-0" />
-                <span>عمّان — الرابية — بجانب مجمع البنوك</span>
+                <span>عمّان — أم نوارة — نزول إشارات الغاز</span>
               </p>
               <p className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-amber-600 dark:text-amber-500 shrink-0" />
-                <span>يومياً: 07:00 صباحاً — 11:00 مساءً</span>
+                <span>السبت — الخميس: 08:00 صباحاً — 08:00 مساءً</span>
               </p>
               <p className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-amber-600 dark:text-amber-500 shrink-0" />
-                <span dir="ltr" className="font-mono">+962 7 9900 0001</span>
+                <span dir="ltr" className="font-mono">0770585313</span>
               </p>
             </div>
           </div>
@@ -393,24 +394,24 @@ export default async function HomePage() {
           <div className="p-6 rounded-2xl bg-white dark:bg-stone-900/80 border border-stone-200/90 dark:border-stone-800 space-y-4 shadow-sm">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-lg text-stone-900 dark:text-white">
-                فرع غرب عمّان — الدوار السابع
+                قسم المبيعات الهندسية والتوريد B2B
               </h3>
               <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 text-xs font-bold border border-emerald-500/20">
-                مفتوح الآن
+                تجهيز فوري
               </span>
             </div>
             <div className="space-y-2 text-xs text-stone-600 dark:text-stone-300">
               <p className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-amber-600 dark:text-amber-500 shrink-0" />
-                <span>عمّان — الدوار السابع — شارع المطار</span>
+                <span>مستودع أم نوارة المركزي — التوصيل لكافة مناطق عمّان والمحافظات</span>
               </p>
               <p className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-amber-600 dark:text-amber-500 shrink-0" />
-                <span>يومياً: 07:00 صباحاً — 12:00 منتصف الليل</span>
+                <span>دعم واتساب واستقبال الطلبيات يومياً</span>
               </p>
               <p className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-amber-600 dark:text-amber-500 shrink-0" />
-                <span dir="ltr" className="font-mono">+962 7 9900 0002</span>
+                <span dir="ltr" className="font-mono">+962 7 7058 5313</span>
               </p>
             </div>
           </div>

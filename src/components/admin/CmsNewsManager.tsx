@@ -118,7 +118,7 @@ export function CmsNewsManager({
       title: title.trim() || null,
       content:
         content.trim() ||
-        "اكتب نص المنشور أو المقالة هنا لتظهر لك معاينة حية مطابقة تماماً لما سيراه زوار روابي فرح...",
+        "اكتب نص المنشور أو المقالة هنا لتظهر لك معاينة حية مطابقة تماماً لما سيراه زوار روز باريس...",
       mediaUrl: mediaUrl.trim() || localPreviewUrl || null,
       isPinned,
       isPublished,
@@ -126,7 +126,7 @@ export function CmsNewsManager({
       commentsCount: 5,
       sharesCount: 3,
       createdAt: new Date().toISOString(),
-      authorName: authorName || "إدارة روابي الفرح",
+      authorName: authorName || "إدارة روز باريس",
       likedByMe: false,
       comments: [],
     }),
@@ -438,7 +438,7 @@ export function CmsNewsManager({
             <span>إدارة المحتوى وآخر الأخبار</span>
           </h1>
           <p className="text-sm text-stone-600 dark:text-stone-400 mt-1">
-            انشر أخبار المخبز، صور المنتجات الطازجة، الفيديوهات، والمقالات مع معاينة فورية لبطاقة المنشور.
+            انشر أخبار المعرض، صور المواد والديكورات الجديدة، الفيديوهات، والمقالات الهندسية مع معاينة فورية لبطاقة المنشور.
           </p>
         </div>
 
@@ -567,7 +567,7 @@ export function CmsNewsManager({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               maxLength={200}
-              placeholder="مثال: خبز الطابون الساخن متوفر الآن في فرع الرابية!"
+              placeholder="مثال: وصول دفعة جديدة من بديل الخشب WPC وبديل الرخام لمعرض أم نوارة!"
               className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-950 text-sm text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>
@@ -586,7 +586,7 @@ export function CmsNewsManager({
               rows={5}
               maxLength={10000}
               required
-              placeholder="شارك أخبار المخبز، العروض، تفاصيل الوصفات أو المناسبات مع عملائنا..."
+              placeholder="شارك أخبار المعرض، العروض الخاصة، نصائح التشطيب والديكور أو أخبار المشاريع مع عملائنا..."
               className="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-950 text-sm text-stone-900 dark:text-white leading-relaxed focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>

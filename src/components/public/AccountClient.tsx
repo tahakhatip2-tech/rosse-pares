@@ -55,10 +55,10 @@ const ADMIN_ROLES = new Set([
 ]);
 
 const ROLE_AR: Record<string, string> = {
-  CUSTOMER: "عميل روابي الفرح",
-  MERCHANT: "شريك جملة (B2B)",
+  CUSTOMER: "عميل روز باريس",
+  MERCHANT: "مقاول / شريك جملة (B2B)",
   SUPER_ADMIN: "مدير النظام",
-  BUSINESS_OWNER: "صاحب المخبزة",
+  BUSINESS_OWNER: "صاحب الشركة",
   BRANCH_MANAGER: "مدير فرع",
   CASHIER: "كاشير",
   WAREHOUSE_STAFF: "موظف مستودع",
@@ -278,15 +278,15 @@ export function AccountClient({ isLoggedIn }: { isLoggedIn: boolean }) {
         <div className="rounded-3xl bg-[var(--color-bg-card)] border border-amber-900/15 dark:border-amber-500/20 p-8 sm:p-10 text-center shadow-xl space-y-6">
           <div className="w-20 h-20 rounded-2xl bg-[#f7efe1] dark:bg-stone-800 border border-amber-500/30 p-2 mx-auto flex items-center justify-center shadow-md">
             <img
-              src="/rwabifarah.png"
-              alt="روابي الفرح"
+              src="/rozeparees.png"
+              alt="روز باريس"
               className="w-full h-full object-contain"
             />
           </div>
 
           <div className="space-y-2">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--color-text)]">
-              أهلاً بك في حسابي — روابي الفرح
+              أهلاً بك في حسابي — روز باريس
             </h1>
             <p className="text-sm text-[var(--color-text-muted)] max-w-md mx-auto leading-relaxed">
               سجّل دخولك أو أنشئ حساباً مجانياً لحفظ عناوين التوصيل، متابعة طلباتك لحظة بلحظة، والاستفادة من نقاط الولاء والعروض الخاصة.
@@ -315,7 +315,7 @@ export function AccountClient({ isLoggedIn }: { isLoggedIn: boolean }) {
               تتبع طلب برقم الطلب ←
             </Link>
             <Link href="/menu" className="hover:text-amber-600 transition">
-              تصفح المخبوزات الطازجة ←
+              تصفح كتالوج مواد البناء ←
             </Link>
           </div>
         </div>

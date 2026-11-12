@@ -662,7 +662,7 @@ async function detectPendingCommand(
     };
   }
 
-  // 2. Product Price Command (e.g. "عدل سعر كرواسون إلى 1.75")
+  // 2. Product Price Command (e.g. "عدل سعر دهان إلى 34.50")
   const priceVerb = hasAny(norm, ["عدل سعر", "عدّل سعر", "غير سعر", "غيّر سعر", "سعر منتج", "تعديل سعر"]);
   if (priceVerb) {
     const numberMatch = rawMessage.match(/(\d+(?:[.,]\d+)?)/);
@@ -768,7 +768,7 @@ async function detectPendingCommand(
     };
   }
 
-  // 4. Inventory Adjustment Command (e.g. "زد مخزون كرواسون بمقدار 25")
+  // 4. Inventory Adjustment Command (e.g. "زد مخزون جبس بورد بمقدار 25")
   const invVerb = hasAny(norm, ["مخزون", "رصيد", "كميه"]) && hasAny(norm, ["زد", "اضف", "اضافة", "انقص", "خصم", "سحب", "تعديل", "عدل"]);
   if (invVerb) {
     const qtyMatch = rawMessage.match(/(\d+(?:[.,]\d+)?)/);
@@ -838,13 +838,13 @@ async function detectPendingCommand(
       .trim();
     if (contentText.length < 5) {
       return {
-        errorNotice: "يرجى كتابة نص الخبر بعد كلمة 'انشر خبر:' (مثال: انشر خبر: خصم 15% على الكرواسون اليوم).",
+        errorNotice: "يرجى كتابة نص الخبر بعد كلمة 'انشر خبر:' (مثال: انشر خبر: خصم 15% على ألواح بديل الرخام اليوم).",
       };
     }
     return {
       type: "CREATE_NEWS_POST",
       title: "نشر خبر جديد في صفحة الأخبار",
-      summary: "إنشاء منشور إخباري منشور للعملاء في قسم أخبار روابي الفرح",
+      summary: "إنشاء منشور إخباري منشور للعملاء في قسم أخبار روز باريس",
       targetLabel: "قسم الأخبار والمجتمع",
       oldValueLabel: "مسودة جديدة",
       newValueLabel: contentText.slice(0, 70) + (contentText.length > 70 ? "..." : ""),
@@ -1117,7 +1117,7 @@ function buildDeterministicAnalyticsReply(
       cms ? `• الأخبار المنشورة: ${cms.publishedPosts} خبر (${cms.totalLikes} إعجاب، ${cms.totalComments} تعليق).` : "",
       alerts.length > 0 ? `\nتنبيهات فورية تتطلب انتباهك:\n${alerts.join("\n")}` : "\nلا توجد تنبيهات حرجة حالياً — سير العمل مستقر.",
       settings.allowCommands
-        ? `\nتلميح: يمكنك إعطائي أوامر مباشرة مثل: "غيّر حالة الطلب ORD-... إلى جاهز" أو "عدّل سعر كرواسون إلى 1.50" أو "سجّل مصروف 30 صيانة".`
+        ? `\nتلميح: يمكنك إعطائي أوامر مباشرة مثل: "غيّر حالة الطلب ORD-... إلى جاهز" أو "عدّل سعر دهان إلى 34.50" أو "سجّل مصروف 30 صيانة".`
         : "",
     ]
       .filter(Boolean)
@@ -1173,7 +1173,7 @@ async function tryGeminiExecutiveAnalysis(
         : "قدّم الرد بأسلوب مستشار إداري ودود واحترافي.";
 
   const systemPrompt = [
-    `أنت "${settings.displayName}" — ${settings.subtitle} لمخابز روابي الفرح.`,
+    `أنت "${settings.displayName}" — ${settings.subtitle} لشركة روز باريس لمواد البناء والديكور.`,
     toneInstruction,
     settings.customInstructions ? `توجيهات المدير الخاصة: ${settings.customInstructions}` : "",
     "اعتمد حصراً على البيانات الحية التالية ولا تخترع أي أرقام:",

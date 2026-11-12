@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import {
   ArrowRight,
   Save,
-  Wheat,
+  Layers,
   AlertCircle,
   CheckCircle2,
   Barcode,
@@ -210,9 +210,9 @@ export function ProductForm({ mode, initialProduct }: ProductFormProps) {
             <span>العودة لقائمة المنتجات</span>
           </Link>
           <h1 className="text-2xl font-black text-stone-900 dark:text-stone-100 flex items-center gap-2">
-            <Wheat className="w-6 h-6 text-amber-600" />
+            <Layers className="w-6 h-6 text-amber-600" />
             <span>
-              {mode === "edit" ? "تعديل بيانات وصور المنتج" : "إضافة صنف مخبوزات جديد"}
+              {mode === "edit" ? "تعديل بيانات وصور المنتج" : "إضافة صنف بناء وديكور جديد"}
             </span>
           </h1>
         </div>
@@ -363,7 +363,7 @@ export function ProductForm({ mode, initialProduct }: ProductFormProps) {
                 required
                 value={formData.nameAr}
                 onChange={(e) => setFormData({ ...formData, nameAr: e.target.value })}
-                placeholder="مثال: خبز طابون بلدي"
+                placeholder="مثال: دهان بلاستيك مطفي فاخر أو لوح جبس بورد أخضر"
                 className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
               />
             </div>
@@ -480,8 +480,8 @@ export function ProductForm({ mode, initialProduct }: ProductFormProps) {
                 onChange={(e) => setFormData({ ...formData, taxRate: e.target.value })}
                 className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
               >
-                <option value="16">16% (معجنات وحلويات عامة)</option>
-                <option value="0">0% (خبز أساسي معفى)</option>
+                <option value="16">16% (مواد البناء والديكور العامة)</option>
+                <option value="0">0% (أصناف معفاة)</option>
                 <option value="4">4% (مدخلات خاصة)</option>
               </select>
             </div>
@@ -495,31 +495,33 @@ export function ProductForm({ mode, initialProduct }: ProductFormProps) {
                 onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
                 className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
               >
+                <option value="لوح">لوح</option>
+                <option value="عبوة">عبوة / سطل</option>
+                <option value="كيس">كيس</option>
+                <option value="متر">متر</option>
                 <option value="قطعة">قطعة</option>
+                <option value="رول">رول</option>
                 <option value="كغم">كيلوغرام (كغم)</option>
-                <option value="ربطة">ربطة / عبوة</option>
-                <option value="درزن">درزن (12 قطعة)</option>
-                <option value="قالب">قالب</option>
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-                الوزن التقريبي (غرام)
+                الوزن التقريبي (كغم/غرام)
               </label>
               <input
                 type="number"
                 step="1"
                 value={formData.weight}
                 onChange={(e) => setFormData({ ...formData, weight: e.target.value })}
-                placeholder="مثال: 250"
+                placeholder="مثال: 25"
                 className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs font-mono text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
               />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-                مدة الصلاحية (ساعة)
+                مدة الصلاحية / الضمان (ساعة)
               </label>
               <input
                 type="number"

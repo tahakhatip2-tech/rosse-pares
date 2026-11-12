@@ -45,13 +45,13 @@ export default async function AdminCmsPage() {
     commentsCount: post.commentsCount,
     sharesCount: post.sharesCount,
     createdAt: post.createdAt.toISOString(),
-    authorName: post.author?.employee?.nameAr || "إدارة روابي الفرح",
+    authorName: post.author?.employee?.nameAr || "إدارة روز باريس",
   }));
 
   return (
     <CmsNewsManager
       initialPosts={initialPosts}
-      authorName={session.user.name || "إدارة روابي الفرح"}
+      authorName={session.user.name || "إدارة روز باريس"}
       canPublish={hasPermission(perms, role, PERMISSIONS.CMS_PUBLISH)}
       canDelete={hasPermission(perms, role, PERMISSIONS.CMS_DELETE)}
     />

@@ -322,20 +322,20 @@ export default function POSTerminalPage() {
           <Link href="/admin/dashboard" className="flex items-center gap-2 group shrink-0">
             <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-stone-900 border border-amber-500/30 p-0.5 flex items-center justify-center">
               <Image
-                src="/rwabifarah.png"
-                alt="شعار روابي الفرح"
+                src="/rozeparees.png"
+                alt="شعار روز باريس"
                 width={32}
                 height={32}
                 className="object-contain w-full h-full"
               />
             </div>
             <span className="font-extrabold text-white text-xs sm:text-sm truncate">
-              نقطة بيع روابي الفرح (POS)
+              نقطة بيع روز باريس (POS)
             </span>
           </Link>
           <span className="h-4 w-px bg-stone-800 hidden md:block" />
           <span className="text-xs text-stone-400 hidden md:inline">
-            الفرع: <strong className="text-white">الفرع الرئيسي — عمّان</strong>
+            الفرع: <strong className="text-white">المعرض الرئيسي — أم نوارة</strong>
           </span>
         </div>
 
@@ -451,7 +451,7 @@ export default function POSTerminalPage() {
             {loadingCatalog ? (
               <div className="h-full flex flex-col items-center justify-center gap-2 text-stone-400 text-xs">
                 <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
-                <span>جاري تحميل أصناف المخبز والباركودات...</span>
+                <span>جاري تحميل أصناف المستودع والباركودات...</span>
               </div>
             ) : filteredProducts.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center text-stone-500 text-xs p-6">
@@ -777,13 +777,13 @@ export default function POSTerminalPage() {
           <div className="w-full max-w-sm bg-white text-stone-900 rounded-2xl p-6 space-y-4 shadow-2xl font-mono text-xs">
             <div className="text-center space-y-1 border-b border-dashed border-stone-300 pb-3">
               <h2 className="text-base font-black text-stone-950 font-sans">
-                مخابز روابي الفرح
+                روز باريس لمواد البناء والديكور
               </h2>
               <p className="text-[10px] text-stone-600 font-sans">
-                الفرع الرئيسي — عمّان — الرابية
+                المعرض والمستودع الرئيسي — عمّان — أم نوارة
               </p>
               <p className="text-[10px] text-stone-500">
-                هاتف: 0799000001 | ض.ع: 12345678
+                هاتف: 0770585313 | ض.ع: 12345678
               </p>
               <div className="flex justify-between text-[10px] text-stone-500 pt-1">
                 <span>{receiptSuccess.ticketNumber}</span>

@@ -49,11 +49,11 @@ function LoginFormContent() {
 
   return (
     <div className="min-h-screen flex" dir="rtl">
-      {/* ── Left Panel (Decorative with Bakery Image) ─────────────────── */}
+      {/* ── Left Panel (Decorative with Showroom Image) ─────────────────── */}
       <div className="hidden lg:flex flex-1 flex-col items-center justify-center relative overflow-hidden bg-stone-950">
         <img
           src="/images/hero-home.jpg"
-          alt="مخبوزات روابي الفرح"
+          alt="روز باريس لمواد البناء والديكور"
           className="absolute inset-0 w-full h-full object-cover brightness-[0.25] scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/70 to-amber-950/50" />
@@ -61,20 +61,20 @@ function LoginFormContent() {
         <div className="relative z-10 text-center text-white px-12">
           <div className="w-24 h-24 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-white/20 p-2 overflow-hidden shadow-xl">
             <Image
-              src="/rwabifarah.png"
-              alt="شعار روابي الفرح"
+              src="/rozeparees.png"
+              alt="شعار روز باريس"
               width={80}
               height={80}
               className="object-contain w-full h-full"
             />
           </div>
-          <h1 className="text-4xl font-bold mb-3">روابي الفرح</h1>
-          <p className="text-xl text-amber-200 mb-8">منصة إدارة المخبزة</p>
+          <h1 className="text-4xl font-bold mb-3">روز باريس</h1>
+          <p className="text-xl text-amber-200 mb-8">منصة إدارة مواد البناء والديكور</p>
 
           <div className="grid grid-cols-1 gap-4 text-sm text-white/70">
             {[
-              "🏪 إدارة الفروع والمستودعات",
-              "🍞 تخطيط الإنتاج والوصفات",
+              "🏪 إدارة المعرض والمستودعات",
+              "🧱 جرد المواد وتوريد المشاريع",
               "💰 نقاط البيع والمتجر الإلكتروني",
               "📊 التقارير والذكاء التجاري",
             ].map((item) => (
@@ -99,16 +99,16 @@ function LoginFormContent() {
           <div className="flex items-center gap-3 mb-8 lg:hidden">
             <div className="w-12 h-12 rounded-xl bg-stone-900 border border-amber-500/30 flex items-center justify-center p-1 overflow-hidden shadow-sm">
               <Image
-                src="/rwabifarah.png"
-                alt="شعار روابي الفرح"
+                src="/rozeparees.png"
+                alt="شعار روز باريس"
                 width={40}
                 height={40}
                 className="object-contain w-full h-full"
               />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-[var(--color-text)]">روابي الفرح</h1>
-              <p className="text-xs text-[var(--color-text-subtle)]">منصة إدارة المخبزة</p>
+              <h1 className="text-xl font-bold text-[var(--color-text)]">روز باريس</h1>
+              <p className="text-xs text-[var(--color-text-subtle)]">منصة إدارة مواد البناء والديكور</p>
             </div>
           </div>
 

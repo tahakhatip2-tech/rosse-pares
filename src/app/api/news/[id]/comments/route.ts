@@ -64,14 +64,14 @@ export async function POST(
     );
 
     const resolvedName =
-      session.user.name || session.user.email || "عميل روابي الفرح";
+      session.user.name || session.user.email || "عميل روز باريس";
 
     const [comment] = await Promise.all([
       prisma.newsComment.create({
         data: {
           postId,
           userId: session.user.id,
-          authorName: isAdminReply ? "إدارة روابي الفرح" : resolvedName,
+          authorName: isAdminReply ? "إدارة روز باريس" : resolvedName,
           isAdminReply,
           content: parsed.data.content,
         },

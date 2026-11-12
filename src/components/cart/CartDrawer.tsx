@@ -64,7 +64,7 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                   سلة التسوق فارغة حالياً
                 </p>
                 <p className="text-xs text-stone-500 mt-1 mb-6">
-                  استكشف أشهى المعجنات والمخبوزات الطازجة وأضفها إلى سلتك
+                  استكشف تشكيلة الدهانات ومواد البناء والديكور وأضفها إلى طلبك
                 </p>
                 <button
                   onClick={onClose}

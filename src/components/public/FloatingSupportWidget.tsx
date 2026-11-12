@@ -16,9 +16,9 @@ interface ChatMessage {
   showWhatsAppHandoff?: boolean;
 }
 
-const WHATSAPP_NUMBER = "962798080411";
-const WHATSAPP_DISPLAY = "+962 7 9808 0411";
-const STORAGE_KEY = "rf_support_chat_v1";
+const WHATSAPP_NUMBER = "962770585313";
+const WHATSAPP_DISPLAY = "0770585313";
+const STORAGE_KEY = "rp_support_chat_v1";
 
 const HIDDEN_PREFIXES = ["/admin", "/pos", "/login", "/register", "/unauthorized"];
 
@@ -26,19 +26,19 @@ const INITIAL_ASSISTANT_MESSAGE: ChatMessage = {
   id: "welcome",
   role: "assistant",
   content:
-    "أهلاً بك في مخابز وحلويات روابي الفرح! 🥐 كيف يمكنني مساعدتك اليوم؟ يمكنك سؤالي عن الأصناف، الأسعار، الحساسية، الفروع أو طلبات الجملة.",
+    "أهلاً بك في روز باريس لمواد البناء والديكور! 🏗️ كيف يمكنني مساعدتك اليوم؟ يمكنك سؤالي عن الدهانات، الجبس بورد، بديل الخشب والرخام، مواد العزل، الأسعار، أو توريد المقاولين والمشاريع.",
   quickReplies: [
-    "ما هي المنتجات المميزة اليوم؟",
-    "أين تقع فروعكم وساعات العمل؟",
-    "هل يوجد توصيل أو طلبات جملة؟",
+    "ما هي المواد والمنتجات المميزة؟",
+    "أين يقع معرضكم وساعات العمل؟",
+    "هل يوجد توصيل أو أسعار مقاولين؟",
     "تحدث مع خدمة العملاء واتساب",
   ],
 };
 
 function buildWhatsAppUrl(pathname: string): string {
   const baseText = pathname.startsWith("/products/")
-    ? `مرحباً مخابز روابي الفرح، لدي استفسار بخصوص هذا المنتج: (${pathname})`
-    : "مرحباً مخابز روابي الفرح، أرغب بالاستفسار عن منتجاتكم وطلباتكم الطازجة.";
+    ? `مرحباً روز باريس لمواد البناء والديكور، لدي استفسار بخصوص هذا المنتج: (${pathname})`
+    : "مرحباً روز باريس لمواد البناء والديكور، أرغب بالاستفسار عن مواد البناء والديكور والأسعار.";
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(baseText)}`;
 }
 
@@ -209,7 +209,7 @@ export default function FloatingSupportWidget() {
       {/* Floating Smart Chat Drawer */}
       {isOpen && (
         <section
-          aria-label="المساعد الذكي لمخابز روابي الفرح"
+          aria-label="المساعد الذكي لروز باريس لمواد البناء والديكور"
           className="w-[calc(100vw-2rem)] sm:w-[390px] h-[520px] max-h-[calc(100vh-13rem)] md:max-h-[calc(100vh-8.5rem)] rounded-3xl overflow-hidden bg-cream-50 dark:bg-stone-900 border border-amber-200/80 dark:border-stone-700 shadow-2xl flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-200"
         >
           {/* Header */}
@@ -217,8 +217,8 @@ export default function FloatingSupportWidget() {
             <div className="flex items-center gap-3 min-w-0">
               <div className="relative w-10 h-10 rounded-full bg-cream-50 p-1 shrink-0 ring-2 ring-amber-300/60 overflow-hidden">
                 <img
-                  src="/rwabifarah.png"
-                  alt="روابي الفرح"
+                  src="/rozeparees.png"
+                  alt="روز باريس"
                   className="w-full h-full object-contain"
                 />
                 <span
@@ -227,10 +227,10 @@ export default function FloatingSupportWidget() {
                 />
               </div>
               <div className="min-w-0">
-                <h2 className="text-sm font-extrabold truncate">مساعد روابي الفرح</h2>
+                <h2 className="text-sm font-extrabold truncate">مساعد روز باريس</h2>
                 <p className="text-[11px] text-amber-100/90 flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
-                  متصل الآن • يجيب فوراً
+                  متصل الآن • استشاري مواد البناء
                 </p>
               </div>
             </div>
@@ -309,7 +309,7 @@ export default function FloatingSupportWidget() {
                               className="w-12 h-12 rounded-lg overflow-hidden bg-[#f7efe1] dark:bg-stone-800 shrink-0 border border-amber-100 dark:border-stone-700"
                             >
                               <img
-                                src={prod.image || "/rwabifarah.png"}
+                                src={prod.image || "/rozeparees.png"}
                                 alt={prod.nameAr}
                                 className="w-full h-full object-cover"
                               />
@@ -400,7 +400,7 @@ export default function FloatingSupportWidget() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="اكتب سؤالك عن المنتجات أو الفروع..."
+              placeholder="اسأل عن الدهانات، الجبس بورد، بديل الرخام، العزل..."
               disabled={isLoading}
               className="flex-1 text-sm px-3.5 py-2.5 rounded-xl bg-cream-50 dark:bg-stone-800 text-stone-900 dark:text-stone-100 placeholder:text-stone-400 border border-amber-200/70 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
             />
@@ -454,7 +454,7 @@ export default function FloatingSupportWidget() {
           </span>
         </button>
 
-        {/* Button 2: Direct WhatsApp (+962 7 9808 0411) */}
+        {/* Button 2: Direct WhatsApp (0770585313) */}
         <a
           href={whatsappUrl}
           target="_blank"

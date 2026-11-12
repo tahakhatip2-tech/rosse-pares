@@ -9,12 +9,12 @@ export default function B2BPage() {
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     businessName: "",
-    businessType: "CAFE",
+    businessType: "CONTRACTOR",
     contactPerson: "",
     phone: "",
     email: "",
     city: "عمّان",
-    dailyVolume: "50-100",
+    dailyVolume: "PROJECT_MEDIUM",
     notes: "",
   });
 
@@ -33,7 +33,7 @@ export default function B2BPage() {
         <div className="absolute inset-0 z-0">
           <img
             src="/images/hero-b2b.jpg"
-            alt="توريد المخبوزات للمحلات والمطاعم"
+            alt="توريد مواد البناء والديكور للمقاولين والمشاريع"
             className="w-full h-full object-cover object-center brightness-[0.32] dark:brightness-[0.22] scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/60 dark:from-stone-950 dark:via-stone-950/75 dark:to-black/85" />
@@ -42,13 +42,13 @@ export default function B2BPage() {
         <div className="max-w-4xl mx-auto px-4 text-center space-y-4 relative z-10 text-white">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/25 backdrop-blur-md text-amber-300 text-xs font-bold border border-amber-400/30 shadow-sm">
             <Building2 className="w-4 h-4 text-amber-300" />
-            <span>بوابة التوريد للمحلات والمطاعم والشركات</span>
+            <span>بوابة التوريد للمقاولين وشركات الإنشاءات والديكور</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight drop-shadow-md">
-            شريك التوريد الحصري لمقهاك ومطعمك
+            شريك التوريد الهندسي لمشاريعك الكبرى
           </h1>
           <p className="text-sm sm:text-base text-stone-200 max-w-2xl mx-auto leading-relaxed drop-shadow-sm">
-            توريد يومي فجر كل صباح بأعلى معايير النظافة والاتساق في المذاق، مع كشوفات حساب مرنة وفواتير ضريبية لقطاع الأعمال في عمّان.
+            توريد مباشر ومجدول للدهانات والجبس بورد وبديل الخشب والرخام ومواد العزل بأعلى المواصفات المعتمدة، مع كشوفات حساب مرنة وفواتير ضريبية لقطاع الأعمال في عمّان والمحافظات.
           </p>
         </div>
       </section>
@@ -59,25 +59,25 @@ export default function B2BPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="p-6 rounded-2xl bg-white dark:bg-stone-900/80 border border-stone-200/90 dark:border-stone-800 space-y-2 shadow-sm">
               <Truck className="w-8 h-8 text-amber-600 dark:text-amber-500" />
-              <h3 className="font-bold text-stone-900 dark:text-white text-base">تسليم مبكر قبل ساعات العمل</h3>
+              <h3 className="font-bold text-stone-900 dark:text-white text-base">توريد مباشر لمواقع العمل</h3>
               <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
-                سيارات التوريد تصلك يومياً بين الساعة 5:30 و 7:00 صباحاً لتكون واجهات مقهاك جاهزة لاستقبال زبائنك.
+                تجهيز وتحميل سريع من مستودع أم نوارة المركزي لتصل المواد إلى موقع مشروعك في الموعد المحدد دون تعطيل للورش.
               </p>
             </div>
 
             <div className="p-6 rounded-2xl bg-white dark:bg-stone-900/80 border border-stone-200/90 dark:border-stone-800 space-y-2 shadow-sm">
               <Receipt className="w-8 h-8 text-amber-600 dark:text-amber-500" />
-              <h3 className="font-bold text-stone-900 dark:text-white text-base">أسعار جملة وفواتير ضريبية</h3>
+              <h3 className="font-bold text-stone-900 dark:text-white text-base">أسعار مقاولين وفواتير ضريبية</h3>
               <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
-                خصومات خاصة على الكميات، حساب ائتماني أسبوعي أو شهري، وفواتير ضريبية متوافقة مع دائرة ضريبة الدخل.
+                خصومات خاصة على الكميات والباليتات، تسهيلات حساب للشركات، وفواتير ضريبية متوافقة مع دائرة ضريبة الدخل (ISTD 16%).
               </p>
             </div>
 
             <div className="p-6 rounded-2xl bg-white dark:bg-stone-900/80 border border-stone-200/90 dark:border-stone-800 space-y-2 shadow-sm">
               <ShieldCheck className="w-8 h-8 text-amber-600 dark:text-amber-500" />
-              <h3 className="font-bold text-stone-900 dark:text-white text-base">ثبات لا يتغير في الجودة</h3>
+              <h3 className="font-bold text-stone-900 dark:text-white text-base">مواصفات قياسية معتمدة</h3>
               <p className="text-xs text-stone-600 dark:text-stone-400 leading-relaxed">
-                خطوط إنتاج متطورة ومقادير محسوبة بالحبة تضمن لك تقديم نفس التجربة الفاخرة لزبائنك كل يوم.
+                نضمن توفّر نشرات المواصفات الفنية وتطابق الألوان والدفعات (Batch Consistency) لكامل مراحل المشروع.
               </p>
             </div>
           </div>
@@ -94,29 +94,29 @@ export default function B2BPage() {
               </div>
               <h3 className="text-2xl font-bold text-stone-900 dark:text-white">تم استلام طلبكم بنجاح!</h3>
               <p className="text-sm text-stone-600 dark:text-stone-300 max-w-md mx-auto leading-relaxed">
-                شكراً لاهتمامكم بالشراكة مع روابي فرح. سيتواصل معكم مسؤول مبيعات الشركات خلال ساعات لتزويدكم بعينات مجانية وعرض الأسعار.
+                شكراً لاهتمامكم بالشراكة مع روز باريس لمواد البناء والديكور. سيتواصل معكم مسؤول مبيعات المشاريع خلال ساعات لتزويدكم بعينات المواد وعرض الأسعار الرسمي.
               </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="border-b border-stone-200 dark:border-stone-800 pb-4">
-                <h2 className="text-xl font-bold text-stone-900 dark:text-white">طلب عينات مجانية وفتح حساب تجاري</h2>
+                <h2 className="text-xl font-bold text-stone-900 dark:text-white">طلب عرض سعر وفتح حساب مقاول / شركة</h2>
                 <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
-                  املأ النموذج وسنقوم بالتواصل معك لترتيب تذوق عينات مجانية لمقهاك أو فندقك.
+                  املأ النموذج وسنقوم بالتواصل معك لتزويدك بقائمة أسعار المقاولين وترتيب معاينة العينات في المعرض.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-                    اسم المنشأة / المقهى / الفندق *
+                    اسم الشركة / المكتب الهندسي / المقاول *
                   </label>
                   <input
                     type="text"
                     required
                     value={formData.businessName}
                     onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
-                    placeholder="مثال: مقهى الأوركيد"
+                    placeholder="مثال: شركة الإعمار الحديثة للمقاولات"
                     className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-xs text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:border-amber-500 transition"
                   />
                 </div>
@@ -130,11 +130,11 @@ export default function B2BPage() {
                     onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-xs text-stone-900 dark:text-white focus:outline-none focus:border-amber-500 transition"
                   >
-                    <option value="CAFE">مقهى وكوفي شوب</option>
-                    <option value="RESTAURANT">مطعم / برغر</option>
-                    <option value="HOTEL">فندق أو منتجع</option>
-                    <option value="SUPERMARKET">سوبرماركت / بقالة</option>
-                    <option value="CATERING">إعاشة ومناسبات</option>
+                    <option value="CONTRACTOR">شركة مقاولات وإنشاءات</option>
+                    <option value="DECOR">مكتب ديكور وتصميم داخلي</option>
+                    <option value="ENGINEERING">مكتب هندسي واستشارات</option>
+                    <option value="HARDWARE_STORE">معرض مواد بناء ودهانات</option>
+                    <option value="DEVELOPER">شركة تطوير عقاري وإسكانات</option>
                   </select>
                 </div>
 
@@ -162,7 +162,7 @@ export default function B2BPage() {
                     dir="ltr"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+962 7 xxxxxxxx"
+                    placeholder="0770585313"
                     className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-xs text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:border-amber-500 text-right transition"
                   />
                 </div>
@@ -176,37 +176,37 @@ export default function B2BPage() {
                     dir="ltr"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    placeholder="procurement@company.com"
+                    placeholder="projects@company.com"
                     className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-xs text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:border-amber-500 text-right transition"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-                    الاستهلاك اليومي التقديري (قطع)
+                    حجم التوريد التقديري للمشروع
                   </label>
                   <select
                     value={formData.dailyVolume}
                     onChange={(e) => setFormData({ ...formData, dailyVolume: e.target.value })}
                     className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-xs text-stone-900 dark:text-white focus:outline-none focus:border-amber-500 transition"
                   >
-                    <option value="20-50">20 — 50 قطعة يومياً</option>
-                    <option value="50-100">50 — 100 قطعة يومياً</option>
-                    <option value="100-300">100 — 300 قطعة يومياً</option>
-                    <option value="300+">+300 قطعة يومياً (كميات كبرى)</option>
+                    <option value="PROJECT_SMALL">توريد تشطيب شقة / فيلا</option>
+                    <option value="PROJECT_MEDIUM">مشروع سكني متوسط (عمارة / إسكان)</option>
+                    <option value="PROJECT_LARGE">مشروع تجاري أو مجمع كبير</option>
+                    <option value="RECURRING">تعاقد توريد شهري مستمر للمعرض</option>
                   </select>
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
-                  أصناف المخبوزات المطلوبة وملاحظات إضافية
+                  المواد والكميات المطلوبة وملاحظات المشروع
                 </label>
                 <textarea
                   rows={3}
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  placeholder="مثال: كرواسون زبدة، بريوش برغر، كوكيز، ميني تارت..."
+                  placeholder="مثال: 200 لوح جبس بورد أخضر، 40 سطل دهان بلاستيك، ألواح بديل خشب WPC، غراء بورسلان..."
                   className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-xs text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:border-amber-500 transition"
                 />
               </div>
@@ -216,7 +216,7 @@ export default function B2BPage() {
                 className="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm shadow-xl shadow-amber-600/20 flex items-center justify-center gap-2 transition hover:-translate-y-0.5"
               >
                 <Send className="w-4 h-4" />
-                <span>إرسال طلب فتح حساب تجاري وتجربة العينات</span>
+                <span>إرسال طلب فتح حساب مقاول وعرض سعر</span>
               </button>
             </form>
           )}

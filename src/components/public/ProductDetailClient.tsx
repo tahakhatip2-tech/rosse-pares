@@ -13,7 +13,7 @@ import {
   X,
   Plus,
   Minus,
-  Wheat,
+  Layers,
   Clock,
   Scale,
   AlertTriangle,
@@ -96,7 +96,7 @@ export function ProductDetailClient({
   const addItem = useCartStore((state) => state.addItem);
 
   const galleryImages =
-    product.images && product.images.length > 0 ? product.images : ["/rwabifarah.png"];
+    product.images && product.images.length > 0 ? product.images : ["/rozeparees.png"];
   const hasRealImages = Boolean(product.images && product.images.length > 0);
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -112,7 +112,7 @@ export function ProductDetailClient({
     product.variants.find((v) => v.id === selectedVariantId) ?? null;
   const activePrice = selectedVariant ? selectedVariant.price : product.retailPrice;
   const activeWeight = selectedVariant?.weight ?? product.weight;
-  const activeImage = galleryImages[activeIndex] || "/rwabifarah.png";
+  const activeImage = galleryImages[activeIndex] || "/rozeparees.png";
 
   function prevImage() {
     setActiveIndex((i) => (i - 1 + galleryImages.length) % galleryImages.length);
@@ -154,7 +154,7 @@ export function ProductDetailClient({
 
   function handleWhatsAppShare() {
     const shareUrl = `${window.location.origin}/products/${product.id}`;
-    const msg = `${product.nameAr} — ${formatCurrency(activePrice)} من مخابز روابي الفرح\n${shareUrl}`;
+    const msg = `${product.nameAr} — ${formatCurrency(activePrice)} من روز باريس لمواد البناء والديكور\n${shareUrl}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank", "noopener");
   }
 
@@ -167,7 +167,7 @@ export function ProductDetailClient({
         </Link>
         <span>/</span>
         <Link href="/menu" className="hover:text-amber-600 transition">
-          قائمة المخبوزات
+          كتالوج المواد
         </Link>
         {product.category && (
           <>
@@ -327,7 +327,7 @@ export function ProductDetailClient({
 
             <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full">
               <ShieldCheck className="w-4 h-4" />
-              <span>محضّر طازجاً يومياً</span>
+              <span>متوفر بالمواصفات القياسية</span>
             </div>
           </div>
 
@@ -370,7 +370,7 @@ export function ProductDetailClient({
             </h2>
             <p className="text-sm text-stone-600 dark:text-stone-300 leading-relaxed whitespace-pre-line">
               {product.descriptionAr ||
-                "منتج مخبوز بعناية فائقة من أجود المكونات الطبيعية الطازجة في أفران روابي الفرح."}
+                "منتج بناء وديكور معتمد وفق أعلى المواصفات الفنية في روز باريس."}
             </p>
           </div>
 
@@ -379,26 +379,26 @@ export function ProductDetailClient({
             <div className="p-3 rounded-2xl bg-stone-50 dark:bg-stone-950/60 border border-stone-200/80 dark:border-stone-800">
               <span className="text-[11px] text-stone-500 flex items-center gap-1">
                 <Scale className="w-3.5 h-3.5 text-amber-600" />
-                <span>الوزن التقريبي</span>
+                <span>الوزن / العبوة</span>
               </span>
               <p className="text-sm font-extrabold text-stone-900 dark:text-white mt-1">
-                {activeWeight ? `${activeWeight} غرام` : `حسب الـ${product.unit}`}
+                {activeWeight ? `${activeWeight} كغم/غ` : `حسب الـ${product.unit}`}
               </p>
             </div>
 
             <div className="p-3 rounded-2xl bg-stone-50 dark:bg-stone-950/60 border border-stone-200/80 dark:border-stone-800">
               <span className="text-[11px] text-stone-500 flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5 text-amber-600" />
-                <span>الصلاحية المثلى</span>
+                <span>الضمان / التخزين</span>
               </span>
               <p className="text-sm font-extrabold text-stone-900 dark:text-white mt-1">
-                {product.shelfLifeHours ? `${product.shelfLifeHours} ساعة` : "يُستهلك طازجاً"}
+                {product.shelfLifeHours ? `${product.shelfLifeHours} ساعة` : "تخزين جاف وآمن"}
               </p>
             </div>
 
             <div className="p-3 rounded-2xl bg-stone-50 dark:bg-stone-950/60 border border-stone-200/80 dark:border-stone-800 col-span-2 sm:col-span-1">
               <span className="text-[11px] text-stone-500 flex items-center gap-1">
-                <Wheat className="w-3.5 h-3.5 text-amber-600" />
+                <Layers className="w-3.5 h-3.5 text-amber-600" />
                 <span>الوحدة</span>
               </span>
               <p className="text-sm font-extrabold text-stone-900 dark:text-white mt-1">
@@ -407,12 +407,12 @@ export function ProductDetailClient({
             </div>
           </div>
 
-          {/* Ingredients */}
+          {/* Technical Specs */}
           {product.ingredientsAr && (
             <div className="p-4 rounded-2xl bg-[#fbf6ec] dark:bg-stone-950/60 border border-amber-900/10 dark:border-stone-800 space-y-1.5">
               <h3 className="text-xs font-bold text-amber-900 dark:text-amber-400 flex items-center gap-1.5">
-                <Wheat className="w-4 h-4" />
-                <span>المكونات الطبيعية</span>
+                <Layers className="w-4 h-4" />
+                <span>المواصفات الفنية والتركيب</span>
               </h3>
               <p className="text-xs text-stone-700 dark:text-stone-300 leading-relaxed">
                 {product.ingredientsAr}
@@ -420,12 +420,12 @@ export function ProductDetailClient({
             </div>
           )}
 
-          {/* Allergens */}
+          {/* Safety & Handling Instructions */}
           {product.allergens && product.allergens.length > 0 && (
             <div className="space-y-2">
               <span className="text-xs font-bold text-stone-700 dark:text-stone-300 flex items-center gap-1.5">
                 <AlertTriangle className="w-4 h-4 text-amber-600" />
-                <span>تنبيه مسببات الحساسية:</span>
+                <span>إرشادات السلامة والاستخدام:</span>
               </span>
               <div className="flex flex-wrap gap-2">
                 {product.allergens.map((key) => (
@@ -513,7 +513,7 @@ export function ProductDetailClient({
         </div>
       </div>
 
-      {/* Bakery Quality Guarantees */}
+      {/* Quality Guarantees */}
       <section className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="flex items-center gap-3.5 p-4 rounded-2xl bg-white dark:bg-stone-900/70 border border-amber-900/10 dark:border-stone-800 shadow-xs">
           <div className="w-11 h-11 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
@@ -521,10 +521,10 @@ export function ProductDetailClient({
           </div>
           <div>
             <h3 className="text-xs font-extrabold text-stone-900 dark:text-white">
-              خَبز طازج على مدار الساعة
+              متانة وجودة معمارية
             </h3>
             <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
-              يُحضّر يومياً في أفران روابي الفرح بأجود المكونات
+              مختارة بعناية من مستودع روز باريس لتدوم طويلاً
             </p>
           </div>
         </div>
@@ -538,7 +538,7 @@ export function ProductDetailClient({
               توصيل سريع ومجهّز في عمّان
             </h3>
             <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
-              تغليف محكم يحافظ على النكهة والطراوة حتى باب بيتك
+              توصيل مباشر لموقع العمل أو المشروع دون تأخير
             </p>
           </div>
         </div>
@@ -549,10 +549,10 @@ export function ProductDetailClient({
           </div>
           <div>
             <h3 className="text-xs font-extrabold text-stone-900 dark:text-white">
-              جودة ونظافة مضمونة 100%
+              مطابقة للمواصفات 100%
             </h3>
             <p className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">
-              رقابة غذائية صارمة ومطابقة لمعايير الغذاء والدواء
+              فحص جودة دقيق وفواتير ضريبية رسمية معتمدة
             </p>
           </div>
         </div>
@@ -597,7 +597,7 @@ export function ProductDetailClient({
           <div className="flex items-center justify-between gap-4">
             <div>
               <span className="text-xs font-bold text-amber-600 dark:text-amber-400">
-                مختارات أفران روابي فرح
+                مختارات معرض روز باريس
               </span>
               <h2 className="text-xl sm:text-2xl font-black text-stone-900 dark:text-white mt-0.5">
                 أصناف أخرى قد تعجبك أيضاً
@@ -626,10 +626,10 @@ export function ProductDetailClient({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h3 className="text-base sm:text-lg font-black text-stone-900 dark:text-white">
-                تصفح باقي أقسام المخبز
+                تصفح باقي أقسام المتجر
               </h3>
               <p className="text-xs text-stone-600 dark:text-stone-400">
-                اكتشف تشكيلاتنا الطازجة من الخبز والمعجنات والحلويات الشرقية والكيك
+                اكتشف تشكيلاتنا المتكاملة من الدهانات والجبس بورد وبديل الخشب والرخام ومواد العزل
               </p>
             </div>
             <Link

@@ -363,7 +363,7 @@ export function NewsPostCard({
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
-          title: post.title || "خبر جديد من روابي الفرح",
+          title: post.title || "خبر جديد من روز باريس",
           text: post.content.slice(0, 140),
           url,
         });
@@ -454,8 +454,8 @@ export function NewsPostCard({
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-11 h-11 rounded-full bg-stone-900 border-2 border-amber-500/50 p-1 flex items-center justify-center shrink-0 shadow-xs overflow-hidden">
               <Image
-                src="/rwabifarah.png"
-                alt="روابي الفرح"
+                src="/rozeparees.png"
+                alt="روز باريس"
                 width={40}
                 height={40}
                 className="object-contain w-full h-full"
@@ -466,7 +466,7 @@ export function NewsPostCard({
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span className="font-extrabold text-sm sm:text-base text-stone-900 dark:text-stone-100">
-                  مخبز وحلويات روابي الفرح
+                  روز باريس لمواد البناء والديكور
                 </span>
                 <BadgeCheck className="w-4 h-4 text-amber-500 shrink-0" />
               </div>
@@ -552,7 +552,7 @@ export function NewsPostCard({
           <div className="relative bg-stone-100 dark:bg-stone-950 border-y border-stone-200/70 dark:border-stone-800/80 group">
             <img
               src={post.mediaUrl}
-              alt={post.title || "صورة من روابي الفرح"}
+              alt={post.title || "صورة من روز باريس"}
               className="w-full max-h-[520px] object-cover cursor-pointer"
               onClick={() => !previewMode && setLightboxOpen(true)}
             />
@@ -575,7 +575,7 @@ export function NewsPostCard({
               <div className="relative w-full aspect-video">
                 <iframe
                   src={youtubeEmbed}
-                  title={post.title || "فيديو روابي الفرح"}
+                  title={post.title || "فيديو روز باريس"}
                   className="w-full h-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
@@ -711,7 +711,7 @@ export function NewsPostCard({
                       onChange={(e) => setCommentText(e.target.value)}
                       placeholder={
                         isAdmin
-                          ? "اكتب رداً باسم إدارة روابي الفرح..."
+                          ? "اكتب رداً باسم إدارة روز باريس..."
                           : "اكتب تعليقك هنا..."
                       }
                       className="flex-1 px-3.5 py-2 rounded-xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-xs sm:text-sm text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
@@ -764,7 +764,7 @@ export function NewsPostCard({
                         {c.isAdminReply && (
                           <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-800 dark:text-amber-300 text-[10px] font-bold">
                             <BadgeCheck className="w-3 h-3" />
-                            <span>المخبز</span>
+                            <span>الإدارة</span>
                           </span>
                         )}
                         <span className="text-[10px] text-stone-400">

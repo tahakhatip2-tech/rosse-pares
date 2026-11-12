@@ -61,7 +61,7 @@ export async function GET(
 
     return ok({
       ...post,
-      authorName: post.author?.employee?.nameAr || "إدارة روابي الفرح",
+      authorName: post.author?.employee?.nameAr || "إدارة روز باريس",
       likedByMe,
     });
   } catch (error) {
@@ -111,7 +111,7 @@ export const PATCH = withAuth(async (req, ctx, paramsPromise) => {
 
     return ok({
       ...updated,
-      authorName: updated.author?.employee?.nameAr || "إدارة روابي الفرح",
+      authorName: updated.author?.employee?.nameAr || "إدارة روز باريس",
     });
   } catch (error) {
     console.error("[News PATCH Error]:", error);

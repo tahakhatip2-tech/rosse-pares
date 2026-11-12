@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "آخر الأخبار والمجتمع",
   description:
-    "تابع أحدث عروض وأخبار ومقالات مخابز وحلويات روابي الفرح وشاركنا تعليقاتك وإعجابك.",
+    "تابع أحدث عروض وأخبار ومقالات روز باريس لمواد البناء والديكور وشاركنا تعليقاتك وإعجابك.",
 };
 
 export default async function NewsPage({
@@ -83,7 +83,7 @@ export default async function NewsPage({
     commentsCount: p.commentsCount,
     sharesCount: p.sharesCount,
     createdAt: p.createdAt.toISOString(),
-    authorName: p.author?.employee?.nameAr || "إدارة روابي الفرح",
+    authorName: p.author?.employee?.nameAr || "إدارة روز باريس",
     likedByMe: likedPostIds.has(p.id),
     comments: p.comments.map((c) => ({
       id: c.id,

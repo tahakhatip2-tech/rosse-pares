@@ -73,7 +73,7 @@ function RegisterFormContent() {
       <div className="hidden lg:flex flex-1 flex-col items-center justify-center relative overflow-hidden bg-stone-950">
         <img
           src="/images/hero-home.jpg"
-          alt="مخبوزات روابي الفرح"
+          alt="روز باريس لمواد البناء والديكور"
           className="absolute inset-0 w-full h-full object-cover brightness-[0.25] scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/70 to-amber-950/50" />
@@ -81,23 +81,23 @@ function RegisterFormContent() {
         <div className="relative z-10 text-center text-white px-12">
           <div className="w-24 h-24 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-white/20 p-2 overflow-hidden shadow-xl">
             <Image
-              src="/rwabifarah.png"
-              alt="شعار روابي الفرح"
+              src="/rozeparees.png"
+              alt="شعار روز باريس"
               width={80}
               height={80}
               className="object-contain w-full h-full"
             />
           </div>
-          <h1 className="text-4xl font-bold mb-3">عائلة روابي الفرح</h1>
+          <h1 className="text-4xl font-bold mb-3">شركاء وعملاء روز باريس</h1>
           <p className="text-xl text-amber-200 mb-8">
-            انضم إلينا وتابع أخبارنا وعروضنا اليومية
+            انضم إلينا وتابع أحدث مواد البناء والديكور وعروض المقاولين
           </p>
 
           <div className="grid grid-cols-1 gap-4 text-sm text-white/75 max-w-sm mx-auto">
             {[
-              "🥐 تفاعل مع أشهى المنشورات والمقالات",
-              "🎁 اكسب نقاط الولاء مع كل طلب",
-              "🚚 تتبع طلباتك بسهولة وسرعة",
+              "🏗️ استعرض أحدث الدهانات والديكورات والمشاريع",
+              "🎁 احصل على عروض ومزايا المقاولين والعملاء",
+              "🚚 تتبع طلبيات التوريد والشحن بسهولة وسرعة",
             ].map((item) => (
               <div
                 key={item}
@@ -120,16 +120,16 @@ function RegisterFormContent() {
           <div className="flex items-center gap-3 mb-8 lg:hidden">
             <div className="w-12 h-12 rounded-xl bg-stone-900 border border-amber-500/30 flex items-center justify-center p-1 overflow-hidden shadow-sm">
               <Image
-                src="/rwabifarah.png"
-                alt="شعار روابي الفرح"
+                src="/rozeparees.png"
+                alt="شعار روز باريس"
                 width={40}
                 height={40}
                 className="object-contain w-full h-full"
               />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-[var(--color-text)]">روابي الفرح</h1>
-              <p className="text-xs text-[var(--color-text-subtle)]">إنشاء حساب عميل جديد</p>
+              <h1 className="text-xl font-bold text-[var(--color-text)]">روز باريس</h1>
+              <p className="text-xs text-[var(--color-text-subtle)]">إنشاء حساب عميل / مقاول جديد</p>
             </div>
           </div>
 
@@ -137,7 +137,7 @@ function RegisterFormContent() {
             إنشاء حساب جديد
           </h2>
           <p className="text-sm text-[var(--color-text-muted)] mb-6">
-            سجّل الآن للتفاعل مع أخبار روابي الفرح والطلب بسهولة
+            سجّل الآن لمتابعة أخبار وعروض روز باريس والطلب بسهولة
           </p>
 
           {formError && (

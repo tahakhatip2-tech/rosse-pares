@@ -6,7 +6,7 @@ import { OrdersClient } from "@/components/public/OrdersClient";
 
 export const metadata: Metadata = {
   title: "طلباتي",
-  description: "متابعة طلباتك من مخابز روابي الفرح وإعادة الطلب بسهولة",
+  description: "متابعة طلبياتك من روز باريس لمواد البناء والديكور وإعادة الطلب بسهولة",
 };
 
 export default async function OrdersPage() {

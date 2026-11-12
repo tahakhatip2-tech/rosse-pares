@@ -48,7 +48,7 @@ export function MenuClient({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/hero-menu.jpg"
-            alt="تشكيلة منتجات روابي الفرح"
+            alt="تشكيلة منتجات روز باريس لمواد البناء والديكور"
             className="w-full h-full object-cover object-center brightness-[0.38] dark:brightness-[0.25] scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/60 dark:from-stone-950 dark:via-stone-950/70 dark:to-black/80" />
@@ -57,13 +57,13 @@ export function MenuClient({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3.5 relative z-10 text-white">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/25 backdrop-blur-md text-amber-300 text-xs font-bold border border-amber-400/30 shadow-sm">
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-            <span>قائمة المنتجات اليومية الطازجة</span>
+            <span>كتالوج مواد البناء والديكور المعتمد</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight drop-shadow-md">
-            قائمة مخبوزات وحلويات روابي فرح
+            منتجات ومواد روز باريس
           </h1>
           <p className="text-sm sm:text-base text-stone-200 max-w-2xl mx-auto leading-relaxed drop-shadow-sm">
-            مخبوزات طازجة محضرة يومياً بأيدي أمهر الخبازين — اطلب أونلاين واستلم من الفرع أو عبر التوصيل السريع لكافة مناطق عمّان
+            دهانات، جبس بورد، بديل الخشب والرخام، مواد عزل، وأدوات هندسية — اطلب أونلاين واستلم من مستودع أم نوارة أو عبر التوصيل السريع لموقع مشروعك
           </p>
         </div>
       </section>
@@ -77,11 +77,10 @@ export function MenuClient({
               <button
                 type="button"
                 onClick={() => setSelectedCat("all")}
-                className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${
-                  selectedCat === "all"
-                    ? "bg-amber-600 text-white shadow-md shadow-amber-600/25"
-                    : "bg-stone-200/70 hover:bg-stone-200 text-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700 dark:text-stone-300"
-                }`}
+                className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${selectedCat === "all"
+                  ? "bg-amber-600 text-white shadow-md shadow-amber-600/25"
+                  : "bg-stone-200/70 hover:bg-stone-200 text-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700 dark:text-stone-300"
+                  }`}
               >
                 جميع الأصناف
               </button>
@@ -93,11 +92,10 @@ export function MenuClient({
                     key={tab.id}
                     type="button"
                     onClick={() => setSelectedCat(tab.id)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${
-                      isActive
-                        ? "bg-amber-600 text-white shadow-md shadow-amber-600/25"
-                        : "bg-stone-200/70 hover:bg-stone-200 text-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700 dark:text-stone-300"
-                    }`}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${isActive
+                      ? "bg-amber-600 text-white shadow-md shadow-amber-600/25"
+                      : "bg-stone-200/70 hover:bg-stone-200 text-stone-700 dark:bg-stone-800 dark:hover:bg-stone-700 dark:text-stone-300"
+                      }`}
                   >
                     {tab.nameAr}
                   </button>
@@ -110,7 +108,7 @@ export function MenuClient({
               <Search className="w-4 h-4 text-stone-400 absolute right-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="ابحث عن مخبوز أو حلوى..."
+                placeholder="ابحث عن دهان، جبس، بديل خشب، عزل..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pr-9 pl-4 py-2 rounded-xl bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-xs text-stone-900 dark:text-white placeholder-stone-400 dark:placeholder-stone-500 focus:outline-none focus:border-amber-500 transition shadow-inner dark:shadow-none"

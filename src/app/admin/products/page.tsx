@@ -12,7 +12,7 @@ import {
   CheckCircle2,
   XCircle,
   Eye,
-  Wheat,
+  Layers,
   Loader2,
   ImageIcon,
   Barcode,
@@ -214,11 +214,11 @@ export default function AdminProductsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-stone-900 dark:text-stone-100 flex items-center gap-2">
-            <Wheat className="w-6 h-6 text-amber-600" />
+            <Layers className="w-6 h-6 text-amber-600" />
             <span>إدارة المنتجات وقائمة الأصناف</span>
           </h1>
           <p className="text-xs text-stone-500 mt-1">
-            إدارة أصناف المخبوزات والحلويات، رفع حتى 5 صور لكل منتج، والأسعار وتفاصيل العرض
+            إدارة أصناف مواد البناء والديكور، رفع حتى 5 صور لكل منتج، والأسعار وتفاصيل العرض
           </p>
         </div>
 
@@ -323,7 +323,7 @@ export default function AdminProductsPage() {
                     p.retailPrice > 0
                       ? ((p.retailPrice - p.costPrice) / p.retailPrice) * 100
                       : 0;
-                  const coverImage = p.images?.[0] || "/rwabifarah.png";
+                  const coverImage = p.images?.[0] || "/rozeparees.png";
                   const hasCustomImages = Boolean(p.images && p.images.length > 0);
                   const isBusy = busyId === p.id;
 

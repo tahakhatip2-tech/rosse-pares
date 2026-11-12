@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   ClipboardList,
-  Croissant,
+  Layers,
   Newspaper,
   UserCircle2,
 } from "lucide-react";
@@ -43,7 +43,7 @@ export function BottomNavBar() {
             href="/menu"
             label="المنتجات"
             active={isMenuActive}
-            icon={Croissant}
+            icon={Layers}
           />
 
           {/* 2. طلباتي */}
@@ -59,11 +59,11 @@ export function BottomNavBar() {
             <Link
               href="/"
               aria-current={isHomeActive ? "page" : undefined}
-              aria-label="الرئيسية — روابي الفرح"
+              aria-label="الرئيسية — روز باريس"
               className="group flex flex-col items-center justify-center focus:outline-none"
             >
               <span
-                style={{ backgroundImage: "url('/rwabifarah.png')" }}
+                style={{ backgroundImage: "url('/rozeparees.png')" }}
                 className={`w-15 h-15 rounded-full bg-[#fdfaf5] dark:bg-[#1e150c] bg-cover bg-center border-[3px] border-solid border-orange-500 transition-all duration-300 ${
                   isHomeActive
                     ? "shadow-[0_0_20px_rgba(249,115,22,0.45)] ring-4 ring-orange-500/20 scale-105"
