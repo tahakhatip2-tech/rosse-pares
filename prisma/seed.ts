@@ -256,17 +256,58 @@ async function main() {
 
   // ── Product Categories (Building Materials) ───────────────
   const categories = [
-    { id: "000000000000000000000020", nameAr: "الدهانات والأصباغ", nameEn: "Paints & Coatings", slug: "paints", sortOrder: 1 },
-    { id: "000000000000000000000021", nameAr: "ألواح الجبس بورد", nameEn: "Gypsum Boards", slug: "gypsum", sortOrder: 2 },
-    { id: "000000000000000000000022", nameAr: "بديل الخشب والرخام", nameEn: "WPC & PVC Marble", slug: "wood-marble", sortOrder: 3 },
-    { id: "000000000000000000000023", nameAr: "مواد العزل واللواصق", nameEn: "Waterproofing & Adhesives", slug: "insulation", sortOrder: 4 },
-    { id: "000000000000000000000024", nameAr: "العدد والأدوات ومواد التأسيس", nameEn: "Tools & Hardware", slug: "tools", sortOrder: 5 },
+    {
+      id: "000000000000000000000020",
+      nameAr: "الدهانات والأصباغ",
+      nameEn: "Paints & Coatings",
+      slug: "paints",
+      image: "/images/categories/paints.jpg",
+      sortOrder: 1,
+    },
+    {
+      id: "000000000000000000000021",
+      nameAr: "ألواح الجبس بورد",
+      nameEn: "Gypsum Boards",
+      slug: "gypsum",
+      image: "/images/categories/gypsum.jpg",
+      sortOrder: 2,
+    },
+    {
+      id: "000000000000000000000022",
+      nameAr: "بديل الخشب والرخام",
+      nameEn: "WPC & PVC Marble",
+      slug: "wood-marble",
+      image: "/images/categories/wood-marble.jpg",
+      sortOrder: 3,
+    },
+    {
+      id: "000000000000000000000023",
+      nameAr: "مواد العزل واللواصق",
+      nameEn: "Waterproofing & Adhesives",
+      slug: "insulation",
+      image: "/images/categories/insulation.jpg",
+      sortOrder: 4,
+    },
+    {
+      id: "000000000000000000000024",
+      nameAr: "العدد والأدوات ومواد التأسيس",
+      nameEn: "Tools & Hardware",
+      slug: "tools",
+      image: "/images/categories/tools.jpg",
+      sortOrder: 5,
+    },
   ];
 
   for (const cat of categories) {
     await prisma.productCategory.upsert({
       where: { id: cat.id },
-      update: { nameAr: cat.nameAr, nameEn: cat.nameEn, slug: cat.slug, sortOrder: cat.sortOrder },
+      update: {
+        nameAr: cat.nameAr,
+        nameEn: cat.nameEn,
+        slug: cat.slug,
+        image: cat.image,
+        sortOrder: cat.sortOrder,
+      },
       create: cat,
     });
   }

@@ -18,6 +18,8 @@ import {
   Barcode,
   Printer,
   FolderPlus,
+  Package,
+  Tags,
 } from "lucide-react";
 import { BarcodeLabelModal } from "@/components/admin/BarcodeLabelModal";
 import {
@@ -46,13 +48,18 @@ interface AdminProductRow {
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<AdminProductRow[]>([]);
   const [dbCategories, setDbCategories] = useState<CategoryOptionItem[]>([]);
+  const [activeView, setActiveView] = useState<"products" | "categories">("products");
   const [loading, setLoading] = useState(true);
+  const [loadingCats, setLoadingCats] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [backfilling, setBackfilling] = useState(false);
   const [barcodeNotice, setBarcodeNotice] = useState<string | null>(null);
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<CategoryOptionItem | null>(
+    null
+  );
   const [labelModalProduct, setLabelModalProduct] = useState<{
     id: string;
     nameAr: string;
@@ -77,6 +84,7 @@ export default function AdminProductsPage() {
   };
 
   const loadCategories = async () => {
+    setLoadingCats(true);
     try {
       const res = await fetch("/api/categories", { cache: "no-store" });
       const json = await res.json();
@@ -85,6 +93,32 @@ export default function AdminProductsPage() {
       }
     } catch {
       // Keep existing list on failure
+    } finally {
+      setLoadingCats(false);
+    }
+  };
+
+  const openCategoriesView = () => {
+    setActiveView("categories");
+    void loadCategories();
+  };
+
+  const deleteCategory = async (cat: CategoryOptionItem) => {
+    if (!confirm(`هل أنت متأكد من حذف الصنف «${cat.nameAr}»؟`)) return;
+    setBusyId(cat.id);
+    setBarcodeNotice(null);
+    try {
+      const res = await fetch(`/api/categories/${cat.id}`, { method: "DELETE" });
+      const json = await res.json();
+      if (res.ok && json?.success) {
+        setDbCategories((prev) => prev.filter((c) => c.id !== cat.id));
+        if (selectedCategory === cat.id) setSelectedCategory("ALL");
+        setBarcodeNotice(`تم حذف الصنف «${cat.nameAr}» بنجاح.`);
+      } else {
+        setBarcodeNotice(json?.error || "تعذر حذف الصنف.");
+      }
+    } finally {
+      setBusyId(null);
     }
   };
 
@@ -130,6 +164,16 @@ export default function AdminProductsPage() {
       p.category?.id === selectedCategory ||
       p.category?.nameAr === selectedCategory;
     return matchSearch && matchCat;
+  });
+
+  const filteredCategories = dbCategories.filter((c) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+    return (
+      c.nameAr.toLowerCase().includes(q) ||
+      c.nameEn.toLowerCase().includes(q) ||
+      c.slug.toLowerCase().includes(q)
+    );
   });
 
   const missingBarcodeCount = products.filter(
@@ -267,7 +311,31 @@ export default function AdminProductsPage() {
 
           <button
             type="button"
-            onClick={() => setCategoryModalOpen(true)}
+            onClick={
+              activeView === "categories"
+                ? () => setActiveView("products")
+                : openCategoriesView
+            }
+            className={`px-4 py-2.5 rounded-xl border font-bold text-xs flex items-center gap-2 transition ${
+              activeView === "categories"
+                ? "bg-stone-900 dark:bg-amber-600 text-white border-stone-900 dark:border-amber-600 shadow-sm"
+                : "border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:bg-stone-50 dark:hover:bg-stone-800 text-stone-700 dark:text-stone-200"
+            }`}
+          >
+            <Tags className="w-4 h-4 text-amber-500" />
+            <span>
+              {activeView === "categories"
+                ? `عرض المنتجات (${products.length})`
+                : `الأصناف (${dbCategories.length})`}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setEditingCategory(null);
+              setCategoryModalOpen(true);
+            }}
             className="px-4 py-2.5 rounded-xl border border-amber-600/35 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-800 dark:text-amber-300 font-bold text-xs flex items-center gap-2 transition"
           >
             <FolderPlus className="w-4 h-4" />
@@ -300,35 +368,70 @@ export default function AdminProductsPage() {
       {/* Filter and Search Bar */}
       <div className="p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 space-y-3">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="relative w-full sm:w-80">
-            <Search className="w-4 h-4 text-stone-400 absolute right-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="بحث بالاسم، الباركود، أو SKU..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pr-9 pl-4 py-2 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs text-stone-900 dark:text-stone-100 placeholder-stone-400 focus:outline-none focus:border-amber-500"
-            />
+          <div className="flex items-center gap-2 w-full sm:w-auto flex-1">
+            <div className="inline-flex p-1 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 shrink-0">
+              <button
+                type="button"
+                onClick={() => setActiveView("products")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition ${
+                  activeView === "products"
+                    ? "bg-white dark:bg-stone-900 text-amber-700 dark:text-amber-400 shadow-xs"
+                    : "text-stone-600 dark:text-stone-300 hover:text-stone-900"
+                }`}
+              >
+                <Package className="w-3.5 h-3.5" />
+                <span>المنتجات ({products.length})</span>
+              </button>
+              <button
+                type="button"
+                onClick={openCategoriesView}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition ${
+                  activeView === "categories"
+                    ? "bg-white dark:bg-stone-900 text-amber-700 dark:text-amber-400 shadow-xs"
+                    : "text-stone-600 dark:text-stone-300 hover:text-stone-900"
+                }`}
+              >
+                <Tags className="w-3.5 h-3.5" />
+                <span>الأصناف ({dbCategories.length})</span>
+              </button>
+            </div>
+
+            <div className="relative flex-1 sm:max-w-xs">
+              <Search className="w-4 h-4 text-stone-400 absolute right-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder={
+                  activeView === "categories"
+                    ? "بحث في الأصناف بالاسم أو Slug..."
+                    : "بحث بالاسم، الباركود، أو SKU..."
+                }
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pr-9 pl-4 py-2 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs text-stone-900 dark:text-stone-100 placeholder-stone-400 focus:outline-none focus:border-amber-500"
+              />
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <span className="text-xs text-stone-500 shrink-0">التصنيف:</span>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
-            >
-              <option value="ALL">جميع التصنيفات ({dbCategories.length})</option>
-              {dbCategories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nameAr}
-                </option>
-              ))}
-            </select>
-          </div>
+          {activeView === "products" && (
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <span className="text-xs text-stone-500 shrink-0">التصنيف:</span>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="px-3 py-2 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-xs text-stone-900 dark:text-stone-100 focus:outline-none focus:border-amber-500"
+              >
+                <option value="ALL">جميع التصنيفات ({dbCategories.length})</option>
+                {dbCategories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.nameAr}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
 
-        {dbCategories.length > 0 && (
+        {activeView === "products" && dbCategories.length > 0 && (
           <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-stone-100 dark:border-stone-800">
             <button
               type="button"
@@ -352,6 +455,17 @@ export default function AdminProductsPage() {
                     : "bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700"
                 }`}
               >
+                {c.image && (
+                  <span className="relative w-4 h-4 rounded overflow-hidden shrink-0">
+                    <Image
+                      src={c.image}
+                      alt={c.nameAr}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  </span>
+                )}
                 <span>{c.nameAr}</span>
                 {typeof c._count?.products === "number" && (
                   <span
@@ -370,7 +484,129 @@ export default function AdminProductsPage() {
         )}
       </div>
 
-      {/* Products Table */}
+      {/* Categories Table View */}
+      {activeView === "categories" ? (
+        <div className="rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 overflow-hidden shadow-xs">
+          {loadingCats ? (
+            <div className="py-16 flex flex-col items-center justify-center gap-2 text-stone-500 text-xs">
+              <Loader2 className="w-6 h-6 animate-spin text-amber-600" />
+              <span>جاري جلب الأصناف...</span>
+            </div>
+          ) : filteredCategories.length === 0 ? (
+            <div className="py-14 text-center text-xs text-stone-500">
+              لا توجد أصناف مطابقة. يمكنك إضافة صنف جديد من زر «+ إضافة صنف جديد».
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-xs">
+                <thead className="bg-stone-50 dark:bg-stone-800/60 border-b border-stone-200 dark:border-stone-800 text-stone-500 font-bold">
+                  <tr>
+                    <th className="py-3 px-4">الصنف والصورة</th>
+                    <th className="py-3 px-4">الرابط المختصر (Slug)</th>
+                    <th className="py-3 px-4">التصنيف الأب</th>
+                    <th className="py-3 px-4">المنتجات المرتبطة</th>
+                    <th className="py-3 px-4">الترتيب</th>
+                    <th className="py-3 px-4 text-center">إجراءات</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-100 dark:divide-stone-800">
+                  {filteredCategories.map((cat) => {
+                    const parentCat = cat.parentId
+                      ? dbCategories.find((c) => c.id === cat.parentId)
+                      : null;
+                    const prodCount = cat._count?.products ?? 0;
+                    const isBusy = busyId === cat.id;
+
+                    return (
+                      <tr
+                        key={cat.id}
+                        className="hover:bg-stone-50/60 dark:hover:bg-stone-800/40 transition"
+                      >
+                        <td className="py-3 px-4 font-bold text-stone-900 dark:text-stone-100">
+                          <div className="flex items-center gap-3">
+                            <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-[#f7efe1] dark:bg-stone-800 border border-amber-900/10 shrink-0">
+                              <Image
+                                src={cat.image || "/rozeparees.png"}
+                                alt={cat.nameAr}
+                                fill
+                                className={
+                                  cat.image ? "object-cover" : "object-contain p-1.5"
+                                }
+                                unoptimized
+                              />
+                            </div>
+                            <div>
+                              <div className="font-bold">{cat.nameAr}</div>
+                              <div className="text-[10px] text-stone-400 font-normal">
+                                {cat.nameEn}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4 font-mono text-[11px] text-stone-600 dark:text-stone-300">
+                          <span dir="ltr" className="px-2 py-0.5 rounded bg-stone-100 dark:bg-stone-800">
+                            {cat.slug}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-stone-600 dark:text-stone-300">
+                          {parentCat ? parentCat.nameAr : "تصنيف رئيسي"}
+                        </td>
+                        <td className="py-3 px-4">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedCategory(cat.id);
+                              setActiveView("products");
+                            }}
+                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-amber-800 dark:text-amber-300 font-bold text-[11px] transition"
+                            title="عرض منتجات هذا الصنف"
+                          >
+                            <span>{prodCount} منتج</span>
+                          </button>
+                        </td>
+                        <td className="py-3 px-4 font-mono font-bold text-stone-500">
+                          {cat.sortOrder ?? 0}
+                        </td>
+                        <td className="py-3 px-4">
+                          <div className="flex items-center justify-center gap-1.5">
+                            <button
+                              type="button"
+                              disabled={isBusy}
+                              onClick={() => {
+                                setEditingCategory(cat);
+                                setCategoryModalOpen(true);
+                              }}
+                              className="p-1.5 rounded-lg text-stone-600 dark:text-stone-300 hover:text-stone-900 hover:bg-stone-100 dark:hover:bg-stone-800 transition disabled:opacity-50"
+                              title="تعديل الصنف والصورة"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={isBusy || prodCount > 0}
+                              onClick={() => deleteCategory(cat)}
+                              className="p-1.5 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/30 transition disabled:opacity-30 disabled:cursor-not-allowed"
+                              title={
+                                prodCount > 0
+                                  ? "لا يمكن حذف صنف يحتوي على منتجات"
+                                  : "حذف الصنف"
+                              }
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          {/* Products Table */}
       <div className="rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 overflow-hidden shadow-xs">
         {loading ? (
           <div className="py-16 flex flex-col items-center justify-center gap-2 text-stone-500 text-xs">
@@ -544,6 +780,8 @@ export default function AdminProductsPage() {
           </div>
         )}
       </div>
+        </>
+      )}
 
       <BarcodeLabelModal
         isOpen={Boolean(labelModalProduct)}
@@ -581,14 +819,29 @@ export default function AdminProductsPage() {
       />
       <CategoryModal
         isOpen={categoryModalOpen}
-        onClose={() => setCategoryModalOpen(false)}
+        mode={editingCategory ? "edit" : "create"}
+        initialCategory={editingCategory}
+        onClose={() => {
+          setCategoryModalOpen(false);
+          setEditingCategory(null);
+        }}
         existingCategories={dbCategories}
         onCreated={(newCat) => {
           setDbCategories((prev) =>
             prev.some((c) => c.id === newCat.id) ? prev : [...prev, newCat]
           );
-          setBarcodeNotice(`تمت إضافة الصنف «${newCat.nameAr}» بنجاح وأصبح متاحاً لاختيار المنتجات.`);
+          setBarcodeNotice(
+            `تمت إضافة الصنف «${newCat.nameAr}» بنجاح وأصبح متاحاً لاختيار المنتجات.`
+          );
           void loadCategories();
+        }}
+        onUpdated={(updatedCat) => {
+          setDbCategories((prev) =>
+            prev.map((c) => (c.id === updatedCat.id ? updatedCat : c))
+          );
+          setBarcodeNotice(`تم تحديث بيانات وصورة الصنف «${updatedCat.nameAr}» بنجاح.`);
+          void loadCategories();
+          void loadProducts();
         }}
       />
     </div>

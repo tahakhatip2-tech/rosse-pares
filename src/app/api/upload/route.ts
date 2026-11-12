@@ -5,6 +5,7 @@ import { hasPermission, PERMISSIONS } from "@/lib/permissions";
 const ALLOWED_FOLDERS: Record<string, string> = {
   news: "rozeparees/news",
   products: "rozeparees/products",
+  categories: "rozeparees/categories",
 };
 
 function resolveUploadFolder(raw?: string | null) {
