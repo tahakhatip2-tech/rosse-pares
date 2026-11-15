@@ -10,6 +10,7 @@ const { auth } = NextAuth(authConfig);
 
 // Protected route prefixes and their required roles
 const PROTECTED_ROUTES: Record<string, string[]> = {
+  "/superadmin": ["SUPER_ADMIN"],
   "/admin": ["SUPER_ADMIN", "BUSINESS_OWNER", "BRANCH_MANAGER", "CASHIER", "WAREHOUSE_STAFF", "PRODUCTION_STAFF", "CONTENT_MANAGER"],
   "/pos": ["SUPER_ADMIN", "BUSINESS_OWNER", "BRANCH_MANAGER", "CASHIER"],
   "/customer": ["CUSTOMER", "SUPER_ADMIN", "BUSINESS_OWNER"],

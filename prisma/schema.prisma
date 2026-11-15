@@ -162,17 +162,50 @@ model Business {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   nameAr      String
   nameEn      String
+  slug        String?  @unique         // URL slug: /stores/al-amal-materials
   logo        String?
+  coverImage  String?                  // Store cover image for directory card
   phone       String?
+  whatsapp    String?                  // WhatsApp number for direct contact
   email       String?
   address     Json?
+  city        String?                  // City for filtering in store directory
+  description String?                  // Public store description
+  website     String?                  // External website (optional)
+
+  // SaaS Subscription
+  subscriptionPlan   String  @default("FREE")  // FREE | BASIC | PRO | ENTERPRISE
+  subscriptionStatus String  @default("TRIAL") // TRIAL | ACTIVE | SUSPENDED | EXPIRED
+  subscriptionExpiry DateTime?
+  trialEndsAt        DateTime?
+
   settings    Json     @default("{}")
   isActive    Boolean  @default(true)
+  isPublic    Boolean  @default(true)  // Show in public store directory
+  isVerified  Boolean  @default(false) // Verified badge
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  branches    Branch[]
-  employees   Employee[]
+  branches         Branch[]
+  employees        Employee[]
+  newsPosts        NewsPost[]
+  subscriptionLogs SubscriptionLog[]
+}
+
+model SubscriptionLog {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  businessId  String   @db.ObjectId
+  plan        String
+  status      String
+  startDate   DateTime
+  endDate     DateTime?
+  amount      Float?
+  notes       String?
+  createdBy   String   @db.ObjectId   // SUPER_ADMIN userId
+  createdAt   DateTime @default(now())
+
+  business    Business @relation(fields: [businessId], references: [id])
 }
 
 model Branch {
@@ -1208,6 +1241,7 @@ enum NewsPostType {
 model NewsPost {
   id            String       @id @default(auto()) @map("_id") @db.ObjectId
   authorId      String       @db.ObjectId
+  businessId    String?      @db.ObjectId   // Which store published this post
   type          NewsPostType @default(TEXT)
   title         String?
   content       String
@@ -1221,6 +1255,7 @@ model NewsPost {
   updatedAt     DateTime     @updatedAt
 
   author        User         @relation(fields: [authorId], references: [id])
+  business      Business?    @relation(fields: [businessId], references: [id])
   comments      NewsComment[]
   likes         NewsLike[]
 }

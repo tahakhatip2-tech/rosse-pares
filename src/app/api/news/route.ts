@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
     const typeParam = searchParams.get("type");
     const includeUnpublished = searchParams.get("all") === "true";
     const postId = searchParams.get("postId")?.trim() || "";
+    const storeSlug = searchParams.get("storeSlug")?.trim() || "";
     const { page, limit, skip } = getPagination(req);
 
     const session = await auth();
@@ -45,6 +46,9 @@ export async function GET(req: NextRequest) {
     if (postId) {
       where.id = postId;
     }
+    if (storeSlug) {
+      where.business = { slug: storeSlug };
+    }
 
     const [posts, total] = await Promise.all([
       prisma.newsPost.findMany({
@@ -53,6 +57,17 @@ export async function GET(req: NextRequest) {
         take: limit,
         orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
         include: {
+          business: {
+            select: {
+              id: true,
+              nameAr: true,
+              nameEn: true,
+              slug: true,
+              logo: true,
+              city: true,
+              isVerified: true,
+            },
+          },
           author: {
             select: {
               id: true,
@@ -120,6 +135,7 @@ export const POST = withAuth(async (req, ctx) => {
     const post = await prisma.newsPost.create({
       data: {
         authorId: ctx.userId,
+        businessId: ctx.businessId || null,
         type,
         title: title || null,
         content,
@@ -128,6 +144,17 @@ export const POST = withAuth(async (req, ctx) => {
         isPublished,
       },
       include: {
+        business: {
+          select: {
+            id: true,
+            nameAr: true,
+            nameEn: true,
+            slug: true,
+            logo: true,
+            city: true,
+            isVerified: true,
+          },
+        },
         author: {
           select: {
             id: true,

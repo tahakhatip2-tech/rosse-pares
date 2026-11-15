@@ -37,6 +37,16 @@ export interface NewsCommentItem {
   createdAt: string;
 }
 
+export interface NewsStoreItem {
+  id: string;
+  nameAr: string;
+  nameEn?: string;
+  slug: string;
+  logo?: string | null;
+  city?: string | null;
+  isVerified?: boolean;
+}
+
 export interface NewsPostItem {
   id: string;
   type: NewsPostTypeValue;
@@ -52,6 +62,7 @@ export interface NewsPostItem {
   authorName?: string;
   likedByMe?: boolean;
   comments?: NewsCommentItem[];
+  business?: NewsStoreItem | null;
 }
 
 interface NewsPostCardProps {
@@ -452,23 +463,63 @@ export function NewsPostCard({
         {/* ── Card Header (Facebook Style) ──────────────────────────── */}
         <div className="p-4 pb-3 flex items-start justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-11 h-11 rounded-full bg-stone-900 border-2 border-amber-500/50 p-1 flex items-center justify-center shrink-0 shadow-xs overflow-hidden">
-              <Image
-                src="/rozeparees.png"
-                alt="روز باريس"
-                width={40}
-                height={40}
-                className="object-contain w-full h-full"
-                unoptimized
-              />
-            </div>
+            {post.business ? (
+              <Link
+                href={`/stores/${post.business.slug}`}
+                className="w-11 h-11 rounded-full bg-stone-900 border-2 border-amber-500/50 p-0.5 flex items-center justify-center shrink-0 shadow-xs overflow-hidden hover:opacity-90 transition-opacity"
+              >
+                {post.business.logo ? (
+                  <img
+                    src={post.business.logo}
+                    alt={post.business.nameAr}
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                ) : (
+                  <Image
+                    src="/rozeparees.png"
+                    alt={post.business.nameAr}
+                    width={40}
+                    height={40}
+                    className="object-contain w-full h-full"
+                    unoptimized
+                  />
+                )}
+              </Link>
+            ) : (
+              <div className="w-11 h-11 rounded-full bg-stone-900 border-2 border-amber-500/50 p-1 flex items-center justify-center shrink-0 shadow-xs overflow-hidden">
+                <Image
+                  src="/rozeparees.png"
+                  alt="روز باريس"
+                  width={40}
+                  height={40}
+                  className="object-contain w-full h-full"
+                  unoptimized
+                />
+              </div>
+            )}
 
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 flex-wrap">
-                <span className="font-extrabold text-sm sm:text-base text-stone-900 dark:text-stone-100">
-                  روز باريس لمواد البناء والديكور
-                </span>
-                <BadgeCheck className="w-4 h-4 text-amber-500 shrink-0" />
+                {post.business ? (
+                  <Link
+                    href={`/stores/${post.business.slug}`}
+                    className="font-extrabold text-sm sm:text-base text-stone-900 dark:text-stone-100 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                  >
+                    {post.business.nameAr}
+                  </Link>
+                ) : (
+                  <span className="font-extrabold text-sm sm:text-base text-stone-900 dark:text-stone-100">
+                    روز باريس لمواد البناء والديكور
+                  </span>
+                )}
+                {(post.business?.isVerified ?? true) && (
+                  <BadgeCheck className="w-4 h-4 text-amber-500 shrink-0" />
+                )}
+                {post.business?.city && (
+                  <span className="text-[10px] text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800 px-2 py-0.5 rounded-md font-normal">
+                    📍 {post.business.city}
+                  </span>
+                )}
               </div>
 
               <div className="flex items-center gap-2 text-xs text-stone-500 dark:text-stone-400 mt-0.5">
@@ -480,6 +531,17 @@ export function NewsPostCard({
                   <TypeIcon className="w-3 h-3" />
                   <span>{meta.label}</span>
                 </span>
+                {post.business && (
+                  <>
+                    <span>•</span>
+                    <Link
+                      href={`/stores/${post.business.slug}`}
+                      className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold hover:underline"
+                    >
+                      زيارة المحل 🛍️
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>

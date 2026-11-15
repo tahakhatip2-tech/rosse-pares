@@ -64,6 +64,7 @@ export function Navbar() {
             <nav className="hide-mobile flex items-center gap-6 text-sm font-semibold">
               {[
                 { href: "/", label: "الرئيسية" },
+                { href: "/stores", label: "دليل المحلات" },
                 { href: "/menu", label: "كتالوج المواد" },
                 { href: "/news", label: "آخر الأخبار" },
                 { href: "/#branches", label: "المعرض والمستودع" },
@@ -137,6 +138,7 @@ export function Navbar() {
           >
             {[
               { href: "/", label: "الرئيسية" },
+              { href: "/stores", label: "دليل المحلات" },
               { href: "/menu", label: "كتالوج المواد" },
               { href: "/orders", label: "طلباتي" },
               { href: "/news", label: "آخر الأخبار" },
