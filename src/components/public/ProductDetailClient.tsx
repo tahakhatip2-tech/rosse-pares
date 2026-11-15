@@ -591,7 +591,7 @@ export function ProductDetailClient({
         </section>
       )}
 
-      {/* Complementary / Suggested Bakery Picks */}
+      {/* Complementary / Suggested Picks */}
       {suggested.length > 0 && (
         <section className="pt-8 border-t border-amber-900/10 dark:border-stone-800 space-y-6">
           <div className="flex items-center justify-between gap-4">

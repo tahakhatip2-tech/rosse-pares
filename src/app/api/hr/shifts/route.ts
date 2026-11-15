@@ -88,7 +88,7 @@ export const POST = withAuth(async (req: NextRequest, ctx) => {
     return err("صيغة وقت البداية أو النهاية غير صالحة", 400);
   }
 
-  // Handle overnight bakery shift (e.g. 21:00 -> 05:00 next day)
+  // Handle overnight shift (e.g. 21:00 -> 05:00 next day)
   if (endTime <= startTime) {
     endTime = new Date(endTime.getTime() + 86400000);
   }

@@ -1,5 +1,5 @@
 // ============================================================
-// BAKERY PLATFORM â€” Prisma Schema (MongoDB)
+// ROZE PAREES â€” Prisma Schema (MongoDB)
 // ============================================================
 
 generator client {

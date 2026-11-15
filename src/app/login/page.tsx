@@ -130,7 +130,7 @@ function LoginFormContent() {
               {...register("email")}
               type="email"
               label="البريد الإلكتروني"
-              placeholder="example@bakery.com"
+              placeholder="example@rozeparees.com"
               icon={<Mail className="w-4 h-4" />}
               error={errors.email?.message}
               autoComplete="email"
