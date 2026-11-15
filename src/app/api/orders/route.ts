@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { withAuth, ok, err, getPagination, auditLog } from "@/lib/api";
 import { generateDocNumber } from "@/lib/dates";
-import { OrderChannel, OrderStatus } from "@prisma/client";
+import { OrderChannel, OrderStatus, MovementType } from "@prisma/client";
 import { auth } from "@/lib/auth";
 
 // GET Orders: protected or accessible by admin / cashier
@@ -178,6 +178,51 @@ export async function POST(req: NextRequest) {
         branch: { select: { nameAr: true, nameEn: true } },
       },
     });
+
+    // Deduct stock for sold items
+    try {
+      const defaultWarehouse = await prisma.warehouse.findFirst({
+        where: { branchId: targetBranchId, isActive: true },
+      });
+
+      if (defaultWarehouse) {
+        for (const item of orderItemsData) {
+          const invItem = await prisma.inventoryItem.findUnique({
+            where: {
+              productId_warehouseId: {
+                productId: item.productId,
+                warehouseId: defaultWarehouse.id,
+              },
+            },
+          });
+
+          if (invItem) {
+            const newQty = Math.max(0, invItem.qtyOnHand - item.qty);
+            await prisma.$transaction([
+              prisma.inventoryItem.update({
+                where: { id: invItem.id },
+                data: { qtyOnHand: newQty },
+              }),
+              prisma.stockMovement.create({
+                data: {
+                  inventoryItemId: invItem.id,
+                  type: MovementType.SALE,
+                  qty: item.qty,
+                  qtyBefore: invItem.qtyOnHand,
+                  qtyAfter: newQty,
+                  referenceType: "SALES_ORDER",
+                  referenceId: order.id,
+                  userId: session?.user?.id ?? "000000000000000000000010",
+                  branchId: targetBranchId,
+                },
+              }),
+            ]);
+          }
+        }
+      }
+    } catch (stockError) {
+      console.error("[Orders Stock Deduction Error]:", stockError);
+    }
 
     if (session?.user?.id) {
       await auditLog({
