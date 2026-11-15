@@ -65,7 +65,7 @@ export function computeEan13CheckDigit(twelveDigits: string): number {
 }
 
 /**
- * Generate a valid 13-digit in-store EAN-13 barcode (prefix "200" for internal bakery retail).
+ * Generate a valid 13-digit in-store EAN-13 barcode (prefix "200" for internal retail).
  */
 export function generateEan13Code(offset = 0): string {
   const tsPart = String(Date.now() + offset).slice(-6);
