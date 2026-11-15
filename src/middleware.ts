@@ -1,5 +1,12 @@
-import { auth } from "@/lib/auth";
+/**
+ * Edge Middleware — uses Edge-safe auth config (NO Prisma).
+ * Full auth (with Prisma) lives in src/lib/auth.ts for Node.js runtime only.
+ */
+import NextAuth from "next-auth";
+import { authConfig } from "@/lib/auth.config";
 import { NextResponse } from "next/server";
+
+const { auth } = NextAuth(authConfig);
 
 // Protected route prefixes and their required roles
 const PROTECTED_ROUTES: Record<string, string[]> = {

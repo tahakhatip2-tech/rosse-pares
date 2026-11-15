@@ -1,9 +1,14 @@
+/**
+ * ROZE PAREES — Full Auth (Node.js Runtime Only)
+ * This file imports Prisma and runs only in Node.js (API routes, Server Components).
+ * Do NOT import this in middleware.ts — use src/lib/auth.config.ts instead.
+ */
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { ROLE_PERMISSIONS } from "@/lib/permissions";
+import { authConfig } from "@/lib/auth.config";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -11,12 +16,7 @@ const loginSchema = z.object({
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  trustHost: true,
-  session: { strategy: "jwt" },
-  pages: {
-    signIn: "/login",
-    error: "/login",
-  },
+  ...authConfig,
   providers: [
     Credentials({
       name: "Credentials",
@@ -76,26 +76,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = (user as any).role;
-        token.permissions = (user as any).permissions;
-        token.branchId = (user as any).branchId;
-        token.businessId = (user as any).businessId;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as any;
-        session.user.permissions = token.permissions as string[];
-        session.user.branchId = token.branchId as string | null;
-        session.user.businessId = token.businessId as string | null;
-      }
-      return session;
-    },
-  },
 });
