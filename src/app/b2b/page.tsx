@@ -3,10 +3,21 @@
 import { Navbar } from "@/components/public/Navbar";
 import { Footer } from "@/components/public/Footer";
 import { useState } from "react";
-import { Building2, CheckCircle2, ShieldCheck, Truck, Receipt, Send } from "lucide-react";
+import {
+  Building2,
+  CheckCircle2,
+  ShieldCheck,
+  Truck,
+  Receipt,
+  Send,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
 
 export default function B2BPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     businessName: "",
     businessType: "CONTRACTOR",
@@ -18,9 +29,34 @@ export default function B2BPage() {
     notes: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/b2b/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          orderType: formData.dailyVolume || formData.businessType,
+        }),
+      });
+
+      const data = await res.json().catch(() => null);
+
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        setError(data?.error || "حدث خطأ، يرجى المحاولة مجدداً");
+      }
+    } catch (err: any) {
+      console.error("[B2B Submit Error]:", err);
+      setError("تعذر الاتصال بالخادم، يرجى التحقق من اتصالك والمحاولة مجدداً");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -106,6 +142,13 @@ export default function B2BPage() {
                 </p>
               </div>
 
+              {error && (
+                <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-xs text-red-700 dark:text-red-300 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-red-600 dark:text-red-400" />
+                  <span>{error}</span>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
@@ -183,6 +226,25 @@ export default function B2BPage() {
 
                 <div>
                   <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
+                    المدينة / المنطقة
+                  </label>
+                  <select
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    className="w-full px-4 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-xs text-stone-900 dark:text-white focus:outline-none focus:border-amber-500 transition"
+                  >
+                    <option value="عمّان">عمّان</option>
+                    <option value="الزرقاء">الزرقاء</option>
+                    <option value="إربد">إربد</option>
+                    <option value="العقبة">العقبة</option>
+                    <option value="السلط">السلط</option>
+                    <option value="مادبا">مادبا</option>
+                    <option value="محافظة أخرى">محافظة أخرى</option>
+                  </select>
+                </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
                     حجم التوريد التقديري للمشروع
                   </label>
                   <select
@@ -213,10 +275,20 @@ export default function B2BPage() {
 
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-sm shadow-xl shadow-amber-600/20 flex items-center justify-center gap-2 transition hover:-translate-y-0.5"
+                disabled={loading}
+                className="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold text-sm shadow-xl shadow-amber-600/20 flex items-center justify-center gap-2 transition hover:-translate-y-0.5"
               >
-                <Send className="w-4 h-4" />
-                <span>إرسال طلب فتح حساب مقاول وعرض سعر</span>
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>جاري إرسال الطلب...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4" />
+                    <span>إرسال طلب فتح حساب مقاول وعرض سعر</span>
+                  </>
+                )}
               </button>
             </form>
           )}
