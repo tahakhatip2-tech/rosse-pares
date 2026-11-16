@@ -31,8 +31,29 @@ export async function GET(req: NextRequest) {
     // ── Single employee lookup by badge number ──────────────────────────
     const badge = req.nextUrl.searchParams.get("badge");
     if (badge) {
+      const cleanBadge = badge.trim();
+      const numOnly = cleanBadge.replace(/\D/g, "");
+      const variants = Array.from(
+        new Set(
+          [
+            cleanBadge,
+            cleanBadge.toUpperCase(),
+            cleanBadge.toLowerCase(),
+            numOnly ? `EMP${numOnly}` : "",
+            numOnly ? `EMP-${numOnly}` : "",
+            numOnly,
+          ].filter(Boolean)
+        )
+      );
+
       const employee = await prisma.employee.findFirst({
-        where: { businessId: business.id, badgeNumber: badge.trim(), isActive: true },
+        where: {
+          businessId: business.id,
+          isActive: true,
+          OR: variants.map((v) => ({
+            badgeNumber: { equals: v, mode: "insensitive" },
+          })),
+        },
         select: {
           id: true,
           nameAr: true,

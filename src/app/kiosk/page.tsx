@@ -123,6 +123,8 @@ export default function KioskPage() {
 
   // Active numpad target: "attendance" | "enroll"
   const [numpadTarget, setNumpadTarget] = useState<"attendance" | "enroll">("attendance");
+  // Keypad mode: numbers or English letters
+  const [keypadMode, setKeypadMode] = useState<"NUM" | "ABC">("NUM");
 
   // Live clock
   useEffect(() => {
@@ -240,7 +242,7 @@ export default function KioskPage() {
     }
   };
 
-  // ── Numpad ───────────────────────────────────────────────────────────────
+  // ── Keypad Input Handler ──────────────────────────────────────────────────
 
   const handleNumpad = useCallback(
     (key: string) => {
@@ -250,10 +252,27 @@ export default function KioskPage() {
         else setBadgeInput((p) => p.slice(0, -1));
         setBadgeError("");
         setEnrollBadgeError("");
+      } else if (key === "EMP") {
+        if (isEnroll) {
+          setEnrollBadge((p) => (p.toUpperCase().startsWith("EMP") ? p : "EMP" + p));
+        } else {
+          setBadgeInput((p) => (p.toUpperCase().startsWith("EMP") ? p : "EMP" + p));
+        }
+        setBadgeError("");
+        setEnrollBadgeError("");
+      } else if (key === "CLEAR") {
+        if (isEnroll) setEnrollBadge("");
+        else setBadgeInput("");
+        setBadgeError("");
+        setEnrollBadgeError("");
       } else {
-        const max = 12;
-        if (isEnroll && enrollBadge.length < max) setEnrollBadge((p) => p + key);
-        if (!isEnroll && badgeInput.length < max) setBadgeInput((p) => p + key);
+        const max = 15;
+        if (isEnroll && enrollBadge.length < max) {
+          setEnrollBadge((p) => (p + key).toUpperCase());
+        }
+        if (!isEnroll && badgeInput.length < max) {
+          setBadgeInput((p) => (p + key).toUpperCase());
+        }
         setBadgeError("");
         setEnrollBadgeError("");
       }
@@ -448,8 +467,6 @@ export default function KioskPage() {
     }
   }, [enrollEmployee, enrollBadge, kioskToken]);
 
-  const numpadKeys = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "⌫", "0", "OK"];
-
   // ════════════════════════════════════════════════════════════════════════
   //  SHARED HEADER
   // ════════════════════════════════════════════════════════════════════════
@@ -507,10 +524,10 @@ export default function KioskPage() {
   );
 
   // ════════════════════════════════════════════════════════════════════════
-  //  SHARED NUMPAD COMPONENT
+  //  SHARED KEYPAD COMPONENT (Numbers + English Letters + EMP Quick-Key)
   // ════════════════════════════════════════════════════════════════════════
 
-  const Numpad = ({
+  const KioskKeypad = ({
     onKey,
     onConfirm,
     confirmLoading,
@@ -521,33 +538,153 @@ export default function KioskPage() {
     confirmLoading: boolean;
     confirmDisabled: boolean;
   }) => (
-    <div className="grid grid-cols-3 gap-2.5">
-      {numpadKeys.map((key) => {
-        const isOK = key === "OK";
-        const isDel = key === "⌫";
-        return (
+    <div className="space-y-3">
+      {/* Top Controls: Mode switcher + Quick EMP key */}
+      <div className="flex items-center justify-between gap-2 p-1.5 bg-stone-950/70 rounded-2xl border border-stone-800/80">
+        <div className="flex items-center gap-1.5">
           <button
-            key={key}
-            onClick={() => (isOK ? onConfirm() : onKey(key))}
-            disabled={(isOK && confirmDisabled) || (isOK && confirmLoading)}
-            className={`h-14 rounded-2xl font-black text-lg transition-all active:scale-95 ${
-              isOK
-                ? "bg-amber-600 hover:bg-amber-500 text-white shadow-lg disabled:opacity-40 disabled:cursor-not-allowed"
-                : isDel
-                ? "bg-stone-700 hover:bg-stone-600 text-stone-200"
-                : "bg-stone-800 hover:bg-stone-700 text-white border border-stone-700/50"
+            type="button"
+            onClick={() => setKeypadMode("NUM")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              keypadMode === "NUM"
+                ? "bg-amber-600 text-white shadow-md"
+                : "text-stone-400 hover:text-white hover:bg-stone-800"
             }`}
           >
-            {isOK ? (
-              confirmLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "✓"
-            ) : isDel ? (
-              <Delete className="w-5 h-5 mx-auto" />
-            ) : (
-              key
-            )}
+            123 الأرقام
           </button>
-        );
-      })}
+          <button
+            type="button"
+            onClick={() => setKeypadMode("ABC")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              keypadMode === "ABC"
+                ? "bg-amber-600 text-white shadow-md"
+                : "text-stone-400 hover:text-white hover:bg-stone-800"
+            }`}
+          >
+            ABC الحروف
+          </button>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => onKey("EMP")}
+          className="px-3.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 border border-amber-500/40 text-xs font-black tracking-wider transition-all active:scale-95"
+          title="إضافة بادئة EMP تلقائياً"
+        >
+          + EMP
+        </button>
+      </div>
+
+      {keypadMode === "NUM" ? (
+        <div className="grid grid-cols-3 gap-2.5">
+          {["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "⌫", "OK"].map((key) => {
+            const isOK = key === "OK";
+            const isDel = key === "⌫";
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => (isOK ? onConfirm() : onKey(key))}
+                disabled={(isOK && confirmDisabled) || (isOK && confirmLoading)}
+                className={`h-14 rounded-2xl font-black text-lg transition-all active:scale-95 ${
+                  isOK
+                    ? "bg-amber-600 hover:bg-amber-500 text-white shadow-lg disabled:opacity-40 disabled:cursor-not-allowed"
+                    : isDel
+                    ? "bg-stone-700 hover:bg-stone-600 text-stone-200"
+                    : "bg-stone-800 hover:bg-stone-700 text-white border border-stone-700/50"
+                }`}
+              >
+                {isOK ? (
+                  confirmLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "✓"
+                ) : isDel ? (
+                  <Delete className="w-5 h-5 mx-auto" />
+                ) : (
+                  key
+                )}
+              </button>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {/* Row 1 */}
+          <div className="grid grid-cols-10 gap-1">
+            {["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"].map((char) => (
+              <button
+                key={char}
+                type="button"
+                onClick={() => onKey(char)}
+                className="h-11 rounded-xl bg-stone-800 hover:bg-stone-700 text-white font-bold text-sm border border-stone-700/50 active:scale-95 transition-all"
+              >
+                {char}
+              </button>
+            ))}
+          </div>
+
+          {/* Row 2 */}
+          <div className="grid grid-cols-9 gap-1 px-2">
+            {["A", "S", "D", "F", "G", "H", "J", "K", "L"].map((char) => (
+              <button
+                key={char}
+                type="button"
+                onClick={() => onKey(char)}
+                className="h-11 rounded-xl bg-stone-800 hover:bg-stone-700 text-white font-bold text-sm border border-stone-700/50 active:scale-95 transition-all"
+              >
+                {char}
+              </button>
+            ))}
+          </div>
+
+          {/* Row 3 */}
+          <div className="grid grid-cols-9 gap-1">
+            {["Z", "X", "C", "V", "B", "N", "M", "-"].map((char) => (
+              <button
+                key={char}
+                type="button"
+                onClick={() => onKey(char)}
+                className="h-11 rounded-xl bg-stone-800 hover:bg-stone-700 text-white font-bold text-sm border border-stone-700/50 active:scale-95 transition-all"
+              >
+                {char}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => onKey("⌫")}
+              className="h-11 rounded-xl bg-stone-700 hover:bg-stone-600 text-stone-200 font-bold text-sm active:scale-95 transition-all flex items-center justify-center"
+              title="مسح"
+            >
+              <Delete className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Row 4: Mode Switcher, Quick EMP, and Confirm */}
+          <div className="grid grid-cols-3 gap-2 pt-1">
+            <button
+              type="button"
+              onClick={() => setKeypadMode("NUM")}
+              className="h-12 rounded-xl bg-stone-700 hover:bg-stone-600 text-white font-bold text-xs active:scale-95 transition-all"
+            >
+              123 الأرقام
+            </button>
+            <button
+              type="button"
+              onClick={() => onKey("EMP")}
+              className="h-12 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 font-black text-xs active:scale-95 transition-all border border-amber-500/40"
+            >
+              + EMP
+            </button>
+            <button
+              type="button"
+              onClick={onConfirm}
+              disabled={confirmDisabled || confirmLoading}
+              className="h-12 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-black text-sm active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shadow-lg"
+            >
+              {confirmLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "✓ تأكيد"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -671,28 +808,40 @@ export default function KioskPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-stone-950 via-stone-900 to-amber-950 flex flex-col" dir="rtl">
         <KioskHeader />
-        <main className="flex-1 flex items-center justify-center p-6">
-          <div className="w-full max-w-sm space-y-5">
+        <main className="flex-1 flex items-center justify-center p-4 sm:p-6">
+          <div className="w-full max-w-md space-y-5">
             <div className="text-center">
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-600/20 border border-amber-600/40 mb-3">
                 <User className="w-7 h-7 text-amber-400" />
               </div>
               <h2 className="text-white font-black text-xl">أدخل رقمك الوظيفي</h2>
-              <p className="text-stone-400 text-xs mt-1">اكتب رقمك ثم اضغط ✓</p>
+              <p className="text-stone-400 text-xs mt-1">اكتب رقمك (مثال: EMP352 أو 352) ثم اضغط ✓</p>
             </div>
 
-            <div className="bg-stone-900/80 backdrop-blur-xl border border-stone-800/60 rounded-3xl p-6 shadow-2xl space-y-5">
-              <div className="bg-stone-800 border-2 border-stone-700 focus-within:border-amber-500 rounded-2xl px-5 py-4 text-center transition-colors">
-                <span className="text-4xl font-black font-mono tracking-widest text-white min-h-[48px] inline-block">
-                  {badgeInput || <span className="text-stone-600">_ _ _ _</span>}
-                </span>
+            <div className="bg-stone-900/80 backdrop-blur-xl border border-stone-800/60 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
+              <div className="bg-stone-800 border-2 border-stone-700 focus-within:border-amber-500 rounded-2xl px-4 py-3 text-center transition-colors">
+                <input
+                  type="text"
+                  dir="ltr"
+                  value={badgeInput}
+                  onChange={(e) => {
+                    setBadgeInput(e.target.value.toUpperCase().replace(/\s/g, ""));
+                    setBadgeError("");
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleBadgeLookup();
+                  }}
+                  placeholder="EMP..."
+                  className="w-full bg-transparent text-center text-3xl sm:text-4xl font-black font-mono tracking-widest text-white placeholder-stone-600 focus:outline-none"
+                  autoFocus
+                />
               </div>
               {badgeError && (
                 <div className="p-3 rounded-xl bg-rose-950/50 border border-rose-800/50 text-rose-300 text-xs flex items-start gap-2">
                   <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" /><span>{badgeError}</span>
                 </div>
               )}
-              <Numpad
+              <KioskKeypad
                 onKey={(k) => { setNumpadTarget("attendance"); handleNumpad(k); }}
                 onConfirm={handleBadgeLookup}
                 confirmLoading={badgeLoading}
@@ -820,29 +969,41 @@ export default function KioskPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-stone-950 via-indigo-950 to-stone-950 flex flex-col" dir="rtl">
         <KioskHeader showEnrollBtn={false} />
-        <main className="flex-1 flex items-center justify-center p-6">
-          <div className="w-full max-w-sm space-y-5">
+        <main className="flex-1 flex items-center justify-center p-4 sm:p-6">
+          <div className="w-full max-w-md space-y-5">
             {/* Title */}
             <div className="text-center">
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600/20 border border-indigo-600/40 mb-3">
                 <UserPlus className="w-7 h-7 text-indigo-400" />
               </div>
               <h2 className="text-white font-black text-xl">تسجيل بصمة موظف</h2>
-              <p className="text-stone-400 text-xs mt-1">أدخل الرقم الوظيفي للموظف المراد تسجيل بصمته</p>
+              <p className="text-stone-400 text-xs mt-1">أدخل الرقم الوظيفي (مثال: EMP352 أو 352) ثم اضغط ✓</p>
             </div>
 
-            <div className="bg-stone-900/80 backdrop-blur-xl border border-indigo-800/40 rounded-3xl p-6 shadow-2xl space-y-5">
-              <div className="bg-stone-800 border-2 border-stone-700 focus-within:border-indigo-500 rounded-2xl px-5 py-4 text-center transition-colors">
-                <span className="text-4xl font-black font-mono tracking-widest text-white min-h-[48px] inline-block">
-                  {enrollBadge || <span className="text-stone-600">_ _ _ _</span>}
-                </span>
+            <div className="bg-stone-900/80 backdrop-blur-xl border border-indigo-800/40 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
+              <div className="bg-stone-800 border-2 border-stone-700 focus-within:border-indigo-500 rounded-2xl px-4 py-3 text-center transition-colors">
+                <input
+                  type="text"
+                  dir="ltr"
+                  value={enrollBadge}
+                  onChange={(e) => {
+                    setEnrollBadge(e.target.value.toUpperCase().replace(/\s/g, ""));
+                    setEnrollBadgeError("");
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleEnrollBadgeLookup();
+                  }}
+                  placeholder="EMP..."
+                  className="w-full bg-transparent text-center text-3xl sm:text-4xl font-black font-mono tracking-widest text-white placeholder-stone-600 focus:outline-none"
+                  autoFocus
+                />
               </div>
               {enrollBadgeError && (
                 <div className="p-3 rounded-xl bg-rose-950/50 border border-rose-800/50 text-rose-300 text-xs flex items-start gap-2">
                   <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" /><span>{enrollBadgeError}</span>
                 </div>
               )}
-              <Numpad
+              <KioskKeypad
                 onKey={(k) => { setNumpadTarget("enroll"); handleNumpad(k); }}
                 onConfirm={handleEnrollBadgeLookup}
                 confirmLoading={enrollBadgeLoading}

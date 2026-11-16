@@ -43,9 +43,30 @@ export async function POST(req: NextRequest) {
     if (!badgeNumber) return err("يرجى إدخال الرقم الوظيفي أولاً", 400);
     if (!["CLOCK_IN", "CLOCK_OUT"].includes(action)) return err("نوع العملية غير صالح", 400);
 
+    const cleanBadge = badgeNumber.trim();
+    const numOnly = cleanBadge.replace(/\D/g, "");
+    const variants = Array.from(
+      new Set(
+        [
+          cleanBadge,
+          cleanBadge.toUpperCase(),
+          cleanBadge.toLowerCase(),
+          numOnly ? `EMP${numOnly}` : "",
+          numOnly ? `EMP-${numOnly}` : "",
+          numOnly,
+        ].filter(Boolean)
+      )
+    );
+
     // Find employee and their WebAuthn credential
     const employee = await prisma.employee.findFirst({
-      where: { businessId: business.id, badgeNumber, isActive: true },
+      where: {
+        businessId: business.id,
+        isActive: true,
+        OR: variants.map((v) => ({
+          badgeNumber: { equals: v, mode: "insensitive" },
+        })),
+      },
       select: {
         id: true,
         nameAr: true,
