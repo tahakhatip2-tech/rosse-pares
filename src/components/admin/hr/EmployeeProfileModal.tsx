@@ -13,6 +13,9 @@ import {
   Printer,
   Loader2,
   ShieldCheck,
+  Fingerprint,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
 import {
@@ -229,6 +232,29 @@ export function EmployeeProfileModal({
                     <span className="font-mono font-bold text-stone-800 dark:text-stone-200">
                       {new Date(profile.startDate).toLocaleDateString("ar-JO")}
                     </span>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-stone-50 dark:bg-stone-950/60 border border-stone-200 dark:border-stone-800 flex items-center gap-2.5">
+                  <Fingerprint className="w-4 h-4 text-amber-600 shrink-0" />
+                  <div>
+                    <span className="text-stone-400 block text-[10px]">الرقم الوظيفي وبصمة الحضور</span>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="font-mono font-bold text-stone-800 dark:text-stone-200">
+                        {profile.badgeNumber || "غير محدد"}
+                      </span>
+                      {profile.fingerprintEnrolled ? (
+                        <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                          <CheckCircle2 className="w-3 h-3" />
+                          بصمة مسجلة
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-0.5 text-[10px] text-stone-400">
+                          <XCircle className="w-3 h-3" />
+                          بدون بصمة
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

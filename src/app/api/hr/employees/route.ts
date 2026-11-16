@@ -65,10 +65,13 @@ export const GET = withAuth(async (req: NextRequest) => {
   const todayMap = new Map(todayAttendance.map((rec) => [rec.employeeId, rec]));
 
   const enriched = employees
-    .map((emp) => ({
-      ...emp,
-      todayAttendance: todayMap.get(emp.id) || null,
-    }))
+    .map((emp) => {
+      const { attendancePin: _p, webAuthnPublicKey: _k, ...safeEmp } = emp as any;
+      return {
+        ...safeEmp,
+        todayAttendance: todayMap.get(emp.id) || null,
+      };
+    })
     .filter((emp) => {
       if (!search) return true;
       return (
@@ -155,6 +158,11 @@ export const POST = withAuth(async (req: NextRequest, ctx) => {
       : "Roze@1234";
   const passwordHash = await bcrypt.hash(passwordPlain, 10);
 
+  // Hash attendance PIN if provided
+  const pinHash = data.attendancePin
+    ? await bcrypt.hash(data.attendancePin, 10)
+    : null;
+
   const startDate = new Date(data.startDate);
   if (Number.isNaN(startDate.getTime())) {
     return err("تاريخ التعيين غير صالح", 400);
@@ -187,6 +195,8 @@ export const POST = withAuth(async (req: NextRequest, ctx) => {
         startDate,
         baseSalary: data.baseSalary,
         isActive: data.isActive,
+        badgeNumber: data.badgeNumber?.trim() || null,
+        attendancePin: pinHash,
       },
       include: {
         user: {

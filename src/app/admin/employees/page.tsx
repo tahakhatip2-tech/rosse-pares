@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   Phone,
   ShieldCheck,
+  Fingerprint,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
 import {
@@ -197,6 +198,17 @@ export default function AdminEmployeesPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <a
+            href="/kiosk"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3.5 py-2.5 rounded-xl border border-amber-300 dark:border-amber-850 bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 dark:text-amber-300 font-bold text-xs flex items-center gap-2 transition shadow-xs"
+            title="فتح شاشة البصمة للمحل (لوحي / آيباد المعرض)"
+          >
+            <Fingerprint className="w-4 h-4 text-amber-600" />
+            <span>شاشة البصمة (Kiosk)</span>
+          </a>
+
           <button
             type="button"
             onClick={() => setActiveTab("attendance")}
@@ -438,15 +450,31 @@ export default function AdminEmployeesPage() {
                                 {emp.nameAr.slice(0, 1)}
                               </div>
                               <div>
-                                <div className="font-bold text-stone-900 dark:text-stone-100">
-                                  {emp.nameAr}
+                                <div className="font-bold text-stone-900 dark:text-stone-100 flex items-center gap-1.5">
+                                  <span>{emp.nameAr}</span>
+                                  {emp.fingerprintEnrolled ? (
+                                    <span title="البصمة مسجلة" className="inline-flex items-center text-emerald-600 dark:text-emerald-400">
+                                      <Fingerprint className="w-3.5 h-3.5" />
+                                    </span>
+                                  ) : (
+                                    <span title="البصمة غير مسجلة بعد" className="inline-flex items-center text-stone-300 dark:text-stone-600">
+                                      <Fingerprint className="w-3.5 h-3.5" />
+                                    </span>
+                                  )}
                                 </div>
-                                <div className="text-[11px] text-stone-500">
-                                  {emp.jobTitle} •{" "}
-                                  <span className="text-stone-400">
-                                    {EMPLOYMENT_TYPE_LABELS[emp.employmentType] ||
-                                      emp.employmentType}
+                                <div className="text-[11px] text-stone-500 flex items-center gap-1.5 flex-wrap">
+                                  <span>
+                                    {emp.jobTitle} •{" "}
+                                    <span className="text-stone-400">
+                                      {EMPLOYMENT_TYPE_LABELS[emp.employmentType] ||
+                                        emp.employmentType}
+                                    </span>
                                   </span>
+                                  {emp.badgeNumber && (
+                                    <span className="px-1.5 py-0.2 rounded bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-mono text-[10px]">
+                                      #{emp.badgeNumber}
+                                    </span>
+                                  )}
                                 </div>
                               </div>
                             </div>

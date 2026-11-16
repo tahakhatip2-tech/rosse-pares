@@ -51,6 +51,10 @@ export default auth((req) => {
     "/api/news",
     "/api/chat",
     "/api/orders/track",
+    "/api/stores",
+    "/stores",
+    "/kiosk",          // بوابة البصمة — عامة ومحمية برمز الكشك
+    "/api/kiosk",      // APIs الكشك — محمية برمز X-Kiosk-Token في الـ route نفسه
   ];
   const isPublic = publicPaths.some((p) => pathname === p || pathname.startsWith(p + "/"));
   if (isPublic) return NextResponse.next();

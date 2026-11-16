@@ -184,6 +184,10 @@ model Business {
   isPublic    Boolean  @default(true)  // Show in public store directory
   isVerified  Boolean  @default(false) // Verified badge
 
+  // Kiosk (Attendance Terminal) Session
+  kioskToken    String?  @unique       // رمز جلسة شاشة البصمة (UUID)
+  kioskTokenExp DateTime?              // تاريخ انتهاء الرمز (24h)
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -296,6 +300,13 @@ model Employee {
   startDate     DateTime
   endDate       DateTime?
   baseSalary    Float  
+  badgeNumber   String?            // الرقم الوظيفي الفريد داخل المحل (EMP-001)
+  attendancePin String?            // رمز PIN مشفّر بـ bcrypt (4 أرقام) — بديل عند عدم توفر بصمة
+  // WebAuthn / Fingerprint fields
+  webAuthnCredentialId   String?   // معرّف بصمة WebAuthn (base64url)
+  webAuthnPublicKey      String?   // المفتاح العام للبصمة (base64url encoded COSE)
+  webAuthnCounter        Int?      @default(0) // عداد الاستخدام لمنع إعادة التشغيل
+  fingerprintEnrolled    Boolean   @default(false) // هل تم تسجيل البصمة؟
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

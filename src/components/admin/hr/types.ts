@@ -38,6 +38,8 @@ export interface HrEmployee {
   endDate: string | null;
   baseSalary: number;
   isActive: boolean;
+  badgeNumber?: string | null;
+  fingerprintEnrolled?: boolean;
   user?: {
     id: string;
     email: string;

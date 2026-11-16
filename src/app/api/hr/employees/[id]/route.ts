@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
 import { withAuth, ok, err, auditLog } from "@/lib/api";
 import { isValidObjectId, updateEmployeeSchema } from "@/lib/hr";
+import bcrypt from "bcryptjs";
 
 export const GET = withAuth(
   async (_req: NextRequest, _ctx, paramsPromise: Promise<{ id: string }>) => {
@@ -48,7 +49,8 @@ export const GET = withAuth(
       return err("الموظف غير موجود", 404);
     }
 
-    return ok({ employee });
+    const { attendancePin: _p, webAuthnPublicKey: _k, ...safeEmployee } = employee as any;
+    return ok({ employee: safeEmployee });
   },
   "employees:view"
 );
@@ -113,6 +115,32 @@ export const PATCH = withAuth(
       if (!branch) return err("الفرع المحدد غير موجود", 400);
       updateEmpData.branchId = branch.id;
       updateEmpData.businessId = branch.businessId;
+    }
+
+    // Handle badgeNumber and attendancePin
+    if (data.badgeNumber !== undefined) {
+      updateEmpData.badgeNumber = data.badgeNumber?.trim() || null;
+    }
+    if (data.attendancePin !== undefined && data.attendancePin !== null) {
+      // Hash the new PIN
+      updateEmpData.attendancePin = await bcrypt.hash(data.attendancePin, 10);
+    } else if (data.attendancePin === null) {
+      // Explicitly clear the PIN
+      updateEmpData.attendancePin = null;
+    }
+
+    // Handle biometric fingerprint fields
+    if (data.fingerprintEnrolled !== undefined) {
+      updateEmpData.fingerprintEnrolled = data.fingerprintEnrolled;
+    }
+    if (data.webAuthnCredentialId !== undefined) {
+      updateEmpData.webAuthnCredentialId = data.webAuthnCredentialId;
+    }
+    if (data.webAuthnPublicKey !== undefined) {
+      updateEmpData.webAuthnPublicKey = data.webAuthnPublicKey;
+    }
+    if (data.webAuthnCounter !== undefined) {
+      updateEmpData.webAuthnCounter = data.webAuthnCounter ?? 0;
     }
 
     const updated = await prisma.$transaction(async (tx) => {

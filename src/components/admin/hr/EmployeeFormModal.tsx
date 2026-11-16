@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, Save, UserPlus, AlertCircle, Shield } from "lucide-react";
+import { X, Save, UserPlus, AlertCircle, Shield, Fingerprint, CheckCircle2, Loader2, Trash2 } from "lucide-react";
 import { DEPARTMENT_OPTIONS, STAFF_ROLE_OPTIONS } from "@/lib/hr";
 import type { HrBranch, HrEmployee } from "./types";
 
@@ -24,6 +24,12 @@ export function EmployeeFormModal({
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Fingerprint enrollment state
+  const [fpLoading, setFpLoading] = useState(false);
+  const [fpError, setFpError] = useState<string | null>(null);
+  const [fpSuccess, setFpSuccess] = useState<string | null>(null);
+  const [fpEnrolled, setFpEnrolled] = useState(false);
+
   const [form, setForm] = useState({
     nameAr: "",
     nameEn: "",
@@ -39,12 +45,16 @@ export function EmployeeFormModal({
     baseSalary: "",
     startDate: new Date().toISOString().slice(0, 10),
     isActive: true,
+    badgeNumber: "",
   });
 
   useEffect(() => {
     if (!isOpen) return;
     setErrorMsg(null);
+    setFpError(null);
+    setFpSuccess(null);
     if (initialEmployee) {
+      setFpEnrolled(!!initialEmployee.fingerprintEnrolled);
       setForm({
         nameAr: initialEmployee.nameAr,
         nameEn: initialEmployee.nameEn || "",
@@ -62,8 +72,10 @@ export function EmployeeFormModal({
           ? new Date(initialEmployee.startDate).toISOString().slice(0, 10)
           : new Date().toISOString().slice(0, 10),
         isActive: initialEmployee.isActive,
+        badgeNumber: initialEmployee.badgeNumber || "",
       });
     } else {
+      setFpEnrolled(false);
       setForm({
         nameAr: "",
         nameEn: "",
@@ -79,6 +91,7 @@ export function EmployeeFormModal({
         baseSalary: "350",
         startDate: new Date().toISOString().slice(0, 10),
         isActive: true,
+        badgeNumber: "",
       });
     }
   }, [isOpen, initialEmployee, branches]);
@@ -110,10 +123,12 @@ export function EmployeeFormModal({
             baseSalary: parseFloat(form.baseSalary) || 0,
             startDate: form.startDate,
             isActive: form.isActive,
+            badgeNumber: form.badgeNumber.trim() || null,
           }
         : {
             ...form,
             baseSalary: parseFloat(form.baseSalary) || 0,
+            badgeNumber: form.badgeNumber.trim() || null,
           };
 
       const res = await fetch(endpoint, {
@@ -134,6 +149,116 @@ export function EmployeeFormModal({
       setErrorMsg("تعذر الاتصال بالخادم");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  // ── Fingerprint enrollment handler ──────────────────────────────────────
+  const handleEnrollFingerprint = async () => {
+    if (!initialEmployee || !form.badgeNumber.trim()) {
+      setFpError("يجب حفظ الموظف وتعيين رقم وظيفي أولاً قبل تسجيل البصمة.");
+      return;
+    }
+    setFpError(null);
+    setFpSuccess(null);
+    setFpLoading(true);
+
+    try {
+      const { startRegistration } = await import("@simplewebauthn/browser");
+
+      // Get kiosk token from localStorage (if admin opened kiosk on this device)
+      const kioskToken = localStorage.getItem("kiosk_token") || "";
+      if (!kioskToken) {
+        setFpError("لا توجد جلسة بوابة بصمة مفتوحة. افتح /kiosk أولاً وسجّل دخولك.");
+        setFpLoading(false);
+        return;
+      }
+
+      // Step 1: Get registration challenge
+      const startRes = await fetch("/api/kiosk/fingerprint/enroll", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-kiosk-token": kioskToken,
+        },
+        body: JSON.stringify({ badgeNumber: form.badgeNumber.trim() }),
+      });
+      const startJson = await startRes.json();
+      if (!startRes.ok || !startJson.data?.options) {
+        setFpError(startJson.error || "فشل بدء تسجيل البصمة.");
+        setFpLoading(false);
+        return;
+      }
+
+      // Step 2: Browser WebAuthn registration (triggers fingerprint sensor)
+      let regResponse;
+      try {
+        regResponse = await startRegistration({ optionsJSON: startJson.data.options });
+      } catch (regErr: unknown) {
+        const msg = regErr instanceof Error ? regErr.message : "";
+        if (msg.includes("cancelled") || msg.includes("abort") || msg.includes("NotAllowedError")) {
+          setFpError("تم إلغاء تسجيل البصمة.");
+        } else {
+          setFpError("فشل استشعار البصمة. تأكد أن الجهاز يدعم Touch ID أو بصمة الإصبع.");
+        }
+        setFpLoading(false);
+        return;
+      }
+
+      // Step 3: Finish enrollment
+      const finishRes = await fetch("/api/kiosk/fingerprint/enroll", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-kiosk-token": kioskToken,
+        },
+        body: JSON.stringify({
+          employeeId: startJson.data.employee.id,
+          registrationResponse: regResponse,
+        }),
+      });
+      const finishJson = await finishRes.json();
+      if (finishRes.ok && finishJson.data?.enrolled) {
+        setFpEnrolled(true);
+        setFpSuccess("✅ تم تسجيل بصمة الموظف بنجاح!");
+        onSaved(); // refresh list
+      } else {
+        setFpError(finishJson.error || "فشل حفظ البصمة.");
+      }
+    } catch {
+      setFpError("حدث خطأ غير متوقع أثناء تسجيل البصمة.");
+    } finally {
+      setFpLoading(false);
+    }
+  };
+
+  const handleDeleteFingerprint = async () => {
+    if (!initialEmployee) return;
+    if (!window.confirm(`هل تريد حذف بصمة ${initialEmployee.nameAr}؟ سيحتاج إعادة تسجيلها.`)) return;
+    setFpError(null);
+    setFpLoading(true);
+    try {
+      const res = await fetch(`/api/hr/employees/${initialEmployee.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          webAuthnCredentialId: null,
+          webAuthnPublicKey: null,
+          webAuthnCounter: 0,
+          fingerprintEnrolled: false,
+        }),
+      });
+      const json = await res.json();
+      if (res.ok && json.success) {
+        setFpEnrolled(false);
+        setFpSuccess("تم حذف بيانات البصمة.");
+        onSaved();
+      } else {
+        setFpError(json.error || "فشل حذف البصمة.");
+      }
+    } catch {
+      setFpError("خطأ في الاتصال بالخادم.");
+    } finally {
+      setFpLoading(false);
     }
   };
 
@@ -327,6 +452,35 @@ export function EmployeeFormModal({
                 ))}
               </select>
             </div>
+
+            <div>
+              <label className="block font-bold text-stone-700 dark:text-stone-300 mb-1 flex items-center gap-1">
+                <Fingerprint className="w-3.5 h-3.5 text-amber-600" />
+                <span>الرقم الوظيفي (للبصمة)</span>
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  dir="ltr"
+                  value={form.badgeNumber}
+                  onChange={(e) => setForm({ ...form, badgeNumber: e.target.value.replace(/\s/g, "") })}
+                  placeholder="مثال: EMP001"
+                  className="flex-1 px-3.5 py-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-900 dark:text-stone-100 font-mono focus:outline-none focus:border-amber-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const random = "EMP" + Math.floor(100 + Math.random() * 900);
+                    setForm({ ...form, badgeNumber: random });
+                  }}
+                  className="px-3 py-2 rounded-xl bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-300 text-xs font-bold hover:bg-amber-100 dark:hover:bg-amber-900/30 transition"
+                  title="توليد رقم تلقائي"
+                >
+                  توليد
+                </button>
+              </div>
+              <p className="text-stone-400 text-xs mt-1">الرقم الذي يدخله الموظف في شاشة البصمة</p>
+            </div>
           </div>
 
           {/* Credentials Box */}
@@ -389,6 +543,76 @@ export function EmployeeFormModal({
               </label>
             )}
           </div>
+
+          {/* Biometric Fingerprint Box (WebAuthn) */}
+          {isEdit && (
+            <div className="p-4 rounded-xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200 dark:border-stone-700/70 space-y-3 text-xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Fingerprint className="w-4 h-4 text-amber-600" />
+                  <span className="font-bold text-stone-900 dark:text-stone-100">
+                    بصمة الإصبع الحيوية (WebAuthn)
+                  </span>
+                </div>
+                {fpEnrolled ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    البصمة مسجلة ومفعلة
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-300">
+                    لم تسجل بعد
+                  </span>
+                )}
+              </div>
+
+              <p className="text-stone-500 dark:text-stone-400 text-[11px]">
+                تتيح للموظف إثبات حضوره وانصرافه عبر شاشة البصمة (Touch ID / بصمة الجهاز) بإدخال رقمه الوظيفي ثم مسح بصمته.
+              </p>
+
+              {fpSuccess && (
+                <div className="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 font-bold flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>{fpSuccess}</span>
+                </div>
+              )}
+
+              {fpError && (
+                <div className="p-2.5 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 font-bold flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{fpError}</span>
+                </div>
+              )}
+
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={handleEnrollFingerprint}
+                  disabled={fpLoading || !form.badgeNumber.trim()}
+                  className="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white font-bold flex items-center gap-1.5 transition active:scale-95"
+                >
+                  {fpLoading ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Fingerprint className="w-3.5 h-3.5" />
+                  )}
+                  <span>{fpEnrolled ? "إعادة تسجيل البصمة" : "تسجيل بصمة جديدة الآن"}</span>
+                </button>
+
+                {fpEnrolled && (
+                  <button
+                    type="button"
+                    onClick={handleDeleteFingerprint}
+                    disabled={fpLoading}
+                    className="px-3 py-2 rounded-xl border border-red-200 dark:border-red-800/60 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 hover:bg-red-100 font-bold flex items-center gap-1.5 transition"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>حذف البصمة</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
 
           <div className="flex justify-end gap-2 pt-2 border-t border-stone-200 dark:border-stone-800">
             <button

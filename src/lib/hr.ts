@@ -203,6 +203,13 @@ export const createEmployeeSchema = z.object({
     .max(50000, "قيمة الراتب غير منطقية"),
   startDate: z.string().trim().min(4, "تاريخ التعيين مطلوب"),
   isActive: z.boolean().optional().default(true),
+  badgeNumber: z.string().trim().optional().nullable(), // الرقم الوظيفي لبوابة البصمة
+  attendancePin: z
+    .string()
+    .trim()
+    .regex(/^\d{4}$/, "رمز PIN يجب أن يتكون من 4 أرقام")
+    .optional()
+    .nullable(), // رمز PIN الخام (يُشفَّر في الـ API)
 });
 
 export const updateEmployeeSchema = z.object({
@@ -231,6 +238,17 @@ export const updateEmployeeSchema = z.object({
   startDate: z.string().trim().optional(),
   endDate: z.string().trim().optional().nullable(),
   isActive: z.boolean().optional(),
+  badgeNumber: z.string().trim().optional().nullable(),
+  attendancePin: z
+    .string()
+    .trim()
+    .regex(/^\d{4}$/, "رمز PIN يجب أن يتكون من 4 أرقام")
+    .optional()
+    .nullable(),
+  fingerprintEnrolled: z.boolean().optional(),
+  webAuthnCredentialId: z.string().trim().optional().nullable(),
+  webAuthnPublicKey: z.string().trim().optional().nullable(),
+  webAuthnCounter: z.number().int().optional().nullable(),
 });
 
 export const attendanceUpsertSchema = z.object({
