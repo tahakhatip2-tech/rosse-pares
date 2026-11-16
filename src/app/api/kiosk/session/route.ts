@@ -21,12 +21,10 @@ export async function POST(req: NextRequest) {
         passwordHash: true,
         role: true,
         isActive: true,
+        businessId: true,
         employee: {
           select: {
             businessId: true,
-            business: {
-              select: { id: true, nameAr: true, nameEn: true, logo: true },
-            },
           },
         },
       },
@@ -48,13 +46,25 @@ export async function POST(req: NextRequest) {
       return err("بيانات الدخول غير صحيحة", 401);
     }
 
-    // Get businessId
-    const businessId = user.employee?.businessId;
+    // Get businessId (from user directly, or employee, or default for SUPER_ADMIN)
+    let businessId = user.businessId || user.employee?.businessId;
+    if (!businessId && user.role === "SUPER_ADMIN") {
+      const defaultBiz = await prisma.business.findFirst({ select: { id: true } });
+      businessId = defaultBiz?.id;
+    }
+
     if (!businessId) {
       return err("لم يتم ربط هذا الحساب بمحل تجاري. تواصل مع الدعم الفني.", 403);
     }
 
-    const business = user.employee?.business;
+    const business = await prisma.business.findUnique({
+      where: { id: businessId },
+      select: { id: true, nameAr: true, nameEn: true, logo: true },
+    });
+
+    if (!business) {
+      return err("المحل التجاري المرتبط غير موجود أو تم حذفه.", 404);
+    }
 
     // Generate kiosk session token
     const kioskToken = crypto.randomUUID();
