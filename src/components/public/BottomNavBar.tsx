@@ -9,7 +9,7 @@ import {
   UserCircle2,
 } from "lucide-react";
 
-const HIDDEN_PREFIXES = ["/admin", "/pos", "/login", "/register", "/unauthorized"];
+const HIDDEN_PREFIXES = ["/admin", "/pos", "/login", "/register", "/unauthorized", "/kiosk"];
 
 export function BottomNavBar() {
   const pathname = usePathname() || "/";

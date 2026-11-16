@@ -20,7 +20,7 @@ const WHATSAPP_NUMBER = "962770585313";
 const WHATSAPP_DISPLAY = "0770585313";
 const STORAGE_KEY = "rp_support_chat_v1";
 
-const HIDDEN_PREFIXES = ["/admin", "/pos", "/login", "/register", "/unauthorized"];
+const HIDDEN_PREFIXES = ["/admin", "/pos", "/login", "/register", "/unauthorized", "/kiosk"];
 
 const INITIAL_ASSISTANT_MESSAGE: ChatMessage = {
   id: "welcome",
