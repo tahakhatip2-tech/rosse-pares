@@ -21,6 +21,10 @@ import {
   AlertCircle,
   UserPlus,
   ArrowRight,
+  KeyRound,
+  Search,
+  Sparkles,
+  Users,
 } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -31,7 +35,8 @@ type KioskView =
   | "ACTION"
   | "FINGERPRINT"
   | "RESULT"
-  | "ENROLL_BADGE"
+  | "ENROLL_AUTH"
+  | "ENROLL_DASHBOARD"
   | "ENROLL_CONFIRM"
   | "ENROLL_SCAN"
   | "ENROLL_DONE";
@@ -50,6 +55,17 @@ interface FoundEmployee {
   nameAr: string;
   fingerprintEnrolled: boolean;
   jobTitle?: string | null;
+}
+
+interface StoreEmployeeListItem {
+  id: string;
+  nameAr: string;
+  nameEn?: string;
+  badgeNumber?: string | null;
+  jobTitle?: string | null;
+  department?: string | null;
+  fingerprintEnrolled: boolean;
+  branch?: { id: string; nameAr: string } | null;
 }
 
 interface PunchResult {
@@ -126,6 +142,18 @@ export default function KioskPage() {
   // Keypad mode: numbers or English letters
   const [keypadMode, setKeypadMode] = useState<"NUM" | "ABC">("NUM");
 
+  // Manager Enrollment Auth state ("يفتحها المدير بالبريد والباسوورد")
+  const [managerEmail, setManagerEmail] = useState("");
+  const [managerPassword, setManagerPassword] = useState("");
+  const [showManagerPassword, setShowManagerPassword] = useState(false);
+  const [managerAuthLoading, setManagerAuthLoading] = useState(false);
+  const [managerAuthError, setManagerAuthError] = useState("");
+
+  // Store employees list for enrollment
+  const [employeesList, setEmployeesList] = useState<StoreEmployeeListItem[]>([]);
+  const [employeesLoading, setEmployeesLoading] = useState(false);
+  const [employeeSearchTerm, setEmployeeSearchTerm] = useState("");
+
   // Live clock
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -193,8 +221,85 @@ export default function KioskPage() {
     setEnrollBadgeError("");
     setEnrollEmployee(null);
     setEnrollError("");
+    setManagerAuthError("");
+    setManagerPassword("");
     setNumpadTarget("attendance");
     setView("BADGE");
+  };
+
+  const loadEmployeesList = useCallback(async (token?: string | null) => {
+    const t = token || kioskToken;
+    if (!t) return;
+    setEmployeesLoading(true);
+    try {
+      const res = await fetch("/api/kiosk/employees", {
+        headers: { "x-kiosk-token": t },
+      });
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data?.employees)) {
+        setEmployeesList(json.data.employees);
+      }
+    } catch (e) {
+      console.error("Failed to load employees list:", e);
+    } finally {
+      setEmployeesLoading(false);
+    }
+  }, [kioskToken]);
+
+  const handleManagerAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setManagerAuthError("");
+    if (!managerEmail.trim() || !managerPassword.trim()) {
+      setManagerAuthError("يرجى إدخال البريد الإلكتروني وكلمة المرور للمدير");
+      return;
+    }
+    setManagerAuthLoading(true);
+    try {
+      const res = await fetch("/api/kiosk/session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: managerEmail.trim(),
+          password: managerPassword.trim(),
+        }),
+      });
+      const json = await res.json();
+      if (res.ok && json.success) {
+        if (json.data?.kioskToken) {
+          localStorage.setItem(KIOSK_TOKEN_KEY, json.data.kioskToken);
+          setKioskToken(json.data.kioskToken);
+          if (json.data.business) {
+            localStorage.setItem(KIOSK_BUSINESS_KEY, JSON.stringify(json.data.business));
+            setBusiness(json.data.business);
+          }
+        }
+        await loadEmployeesList(json.data?.kioskToken || kioskToken);
+        setManagerPassword("");
+        setEnrollBadge("");
+        setEnrollBadgeError("");
+        setEnrollEmployee(null);
+        setView("ENROLL_DASHBOARD");
+      } else {
+        setManagerAuthError(json.error || "بيانات دخول المدير غير صحيحة أو الحساب غير مخوّل");
+      }
+    } catch {
+      setManagerAuthError("فشل الاتصال بالخادم. تحقق من الإنترنت.");
+    } finally {
+      setManagerAuthLoading(false);
+    }
+  };
+
+  const handleSelectEmployeeForEnroll = (emp: StoreEmployeeListItem) => {
+    setEnrollEmployee({
+      id: emp.id,
+      nameAr: emp.nameAr,
+      fingerprintEnrolled: emp.fingerprintEnrolled,
+      jobTitle: emp.jobTitle,
+    });
+    setEnrollBadge(emp.badgeNumber || "");
+    setEnrollBadgeError("");
+    setEnrollError("");
+    setView("ENROLL_CONFIRM");
   };
 
   const handleSessionExpired = () => {
@@ -454,6 +559,7 @@ export default function KioskPage() {
       const finishJson = await finishRes.json();
 
       if (finishRes.ok && finishJson.data?.enrolled) {
+        loadEmployeesList(kioskToken);
         setView("ENROLL_DONE");
       } else {
         setEnrollError(finishJson.error || "فشل حفظ بيانات البصمة.");
@@ -499,17 +605,16 @@ export default function KioskPage() {
         {showEnrollBtn && (
           <button
             onClick={() => {
-              setEnrollBadge("");
-              setEnrollBadgeError("");
-              setEnrollEmployee(null);
-              setEnrollError("");
-              setNumpadTarget("enroll");
-              setView("ENROLL_BADGE");
+              setManagerAuthError("");
+              setManagerPassword("");
+              setManagerEmail(loginEmail || "admin@rossepares.com");
+              setView("ENROLL_AUTH");
             }}
-            className="p-2 rounded-xl border border-amber-600/50 hover:bg-amber-600/20 text-amber-400 hover:text-amber-300 transition-all"
-            title="تسجيل بصمة موظف جديد"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 text-xs font-bold transition-all shadow-xs"
+            title="تعريف بصمة الموظف (خاص بالمدير)"
           >
-            <UserPlus className="w-4 h-4" />
+            <KeyRound className="w-4 h-4 text-indigo-400" />
+            <span className="hidden sm:inline">تعريف بصمة موظف</span>
           </button>
         )}
         <button
@@ -847,6 +952,22 @@ export default function KioskPage() {
                 confirmLoading={badgeLoading}
                 confirmDisabled={!badgeInput.trim()}
               />
+
+              <div className="pt-2 border-t border-stone-800/80">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setManagerAuthError("");
+                    setManagerPassword("");
+                    setManagerEmail(loginEmail || "admin@rossepares.com");
+                    setView("ENROLL_AUTH");
+                  }}
+                  className="w-full py-3 rounded-2xl bg-indigo-950/40 hover:bg-indigo-900/60 border border-indigo-700/50 hover:border-indigo-500 text-indigo-300 hover:text-indigo-200 text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2"
+                >
+                  <KeyRound className="w-4 h-4 text-indigo-400" />
+                  <span>تعريف بصمة الموظف (خاص بالمدير)</span>
+                </button>
+              </div>
             </div>
 
             {webAuthnSupported === false && (
@@ -962,26 +1083,147 @@ export default function KioskPage() {
   }
 
   // ════════════════════════════════════════════════════════════════════════
-  //  RENDER: ENROLLMENT — BADGE ENTRY
+  //  RENDER: ENROLLMENT — STEP 1: MANAGER AUTHENTICATION
+  //  ("يفتحها المدير بالبريد والباسوورد")
   // ════════════════════════════════════════════════════════════════════════
 
-  if (view === "ENROLL_BADGE") {
+  if (view === "ENROLL_AUTH") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-stone-950 via-indigo-950 to-stone-950 flex flex-col justify-center items-center p-4" dir="rtl">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-600/30 border border-indigo-500/50 mb-3 shadow-xl shadow-indigo-950/60">
+              <KeyRound className="w-8 h-8 text-indigo-400" />
+            </div>
+            <h1 className="text-2xl font-black text-white">تعريف بصمة الموظف</h1>
+            <p className="text-xs text-stone-400 mt-1">خاص بإدارة المعرض — أدخل البريد وكلمة المرور لفتح واجهة تعريف البصمات</p>
+          </div>
+
+          <div className="bg-stone-900/85 backdrop-blur-xl border border-indigo-800/40 rounded-3xl p-6 shadow-2xl">
+            <form onSubmit={handleManagerAuth} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-stone-300 mb-1.5">البريد الإلكتروني للمدير</label>
+                <input
+                  type="email"
+                  required
+                  value={managerEmail}
+                  onChange={(e) => setManagerEmail(e.target.value)}
+                  placeholder="admin@rossepares.com"
+                  className="w-full px-4 py-3 rounded-xl bg-stone-800 border border-stone-700 text-white placeholder-stone-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-stone-300 mb-1.5">كلمة المرور للمدير</label>
+                <div className="relative">
+                  <input
+                    type={showManagerPassword ? "text" : "password"}
+                    required
+                    value={managerPassword}
+                    onChange={(e) => setManagerPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full px-4 py-3 rounded-xl bg-stone-800 border border-stone-700 text-white placeholder-stone-500 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowManagerPassword(!showManagerPassword)}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white"
+                  >
+                    {showManagerPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {managerAuthError && (
+                <div className="p-3 rounded-xl bg-rose-950/50 border border-rose-800/50 text-rose-300 text-xs flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <span>{managerAuthError}</span>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={managerAuthLoading}
+                className="w-full py-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-base transition-all shadow-lg shadow-indigo-900/50 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-60"
+              >
+                {managerAuthLoading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    <KeyRound className="w-5 h-5" />
+                    <span>فتح واجهة تعريف البصمة</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={resetEnrollment}
+                className="w-full py-2.5 rounded-xl bg-stone-800/60 hover:bg-stone-800 text-stone-400 text-xs font-bold transition-all flex items-center justify-center gap-2"
+              >
+                <ArrowRight className="w-4 h-4" />
+                <span>إلغاء والعودة لشاشة الحضور</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
+  //  RENDER: ENROLLMENT — STEP 2: DASHBOARD
+  //  ("يدخل الرقم الوظيفي للموظف أو يختاره من القائمة")
+  // ════════════════════════════════════════════════════════════════════════
+
+  if (view === "ENROLL_DASHBOARD") {
+    const filteredEmployees = employeesList.filter((emp) => {
+      if (!employeeSearchTerm.trim()) return true;
+      const term = employeeSearchTerm.trim().toLowerCase();
+      return (
+        emp.nameAr.toLowerCase().includes(term) ||
+        (emp.badgeNumber && emp.badgeNumber.toLowerCase().includes(term)) ||
+        (emp.jobTitle && emp.jobTitle.toLowerCase().includes(term))
+      );
+    });
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-stone-950 via-indigo-950 to-stone-950 flex flex-col" dir="rtl">
-        <KioskHeader showEnrollBtn={false} />
-        <main className="flex-1 flex items-center justify-center p-4 sm:p-6">
-          <div className="w-full max-w-md space-y-5">
-            {/* Title */}
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600/20 border border-indigo-600/40 mb-3">
-                <UserPlus className="w-7 h-7 text-indigo-400" />
-              </div>
-              <h2 className="text-white font-black text-xl">تسجيل بصمة موظف</h2>
-              <p className="text-stone-400 text-xs mt-1">أدخل الرقم الوظيفي (مثال: EMP352 أو 352) ثم اضغط ✓</p>
+        <header className="flex items-center justify-between px-6 py-4 border-b border-indigo-900/40 backdrop-blur-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-md">
+              <Fingerprint className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <p className="text-white font-black text-sm">واجهة تعريف بصمة الموظف</p>
+              <p className="text-indigo-300 text-xs flex items-center gap-1">
+                <Shield className="w-3 h-3 text-indigo-400" />
+                <span>جلسة مدير المعرض مفعلة</span>
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={resetEnrollment}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white text-xs font-bold transition-all border border-stone-700"
+          >
+            <span>✕ إغلاق والعودة لشاشة الحضور</span>
+          </button>
+        </header>
+
+        <main className="flex-1 p-4 sm:p-6 max-w-4xl mx-auto w-full space-y-6">
+          {/* Quick Manual Entry Card */}
+          <div className="bg-stone-900/80 backdrop-blur-xl border border-indigo-800/40 rounded-3xl p-5 shadow-2xl space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-white font-bold text-sm flex items-center gap-2">
+                <UserPlus className="w-4 h-4 text-indigo-400" />
+                <span>إدخال الرقم الوظيفي للتعريف السريع</span>
+              </h2>
+              <span className="text-stone-400 text-xs font-mono">مثال: EMP352 أو 352</span>
             </div>
 
-            <div className="bg-stone-900/80 backdrop-blur-xl border border-indigo-800/40 rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4">
-              <div className="bg-stone-800 border-2 border-stone-700 focus-within:border-indigo-500 rounded-2xl px-4 py-3 text-center transition-colors">
+            <div className="flex gap-2">
+              <div className="flex-1 bg-stone-800 border-2 border-stone-700 focus-within:border-indigo-500 rounded-2xl px-4 py-2.5 flex items-center">
                 <input
                   type="text"
                   dir="ltr"
@@ -993,26 +1235,145 @@ export default function KioskPage() {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") handleEnrollBadgeLookup();
                   }}
-                  placeholder="EMP..."
-                  className="w-full bg-transparent text-center text-3xl sm:text-4xl font-black font-mono tracking-widest text-white placeholder-stone-600 focus:outline-none"
-                  autoFocus
+                  placeholder="أدخل الرقم الوظيفي (مثال: EMP352)"
+                  className="w-full bg-transparent text-lg sm:text-xl font-black font-mono tracking-wider text-white placeholder-stone-500 focus:outline-none text-right"
                 />
               </div>
-              {enrollBadgeError && (
-                <div className="p-3 rounded-xl bg-rose-950/50 border border-rose-800/50 text-rose-300 text-xs flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" /><span>{enrollBadgeError}</span>
-                </div>
-              )}
-              <KioskKeypad
-                onKey={(k) => { setNumpadTarget("enroll"); handleNumpad(k); }}
-                onConfirm={handleEnrollBadgeLookup}
-                confirmLoading={enrollBadgeLoading}
-                confirmDisabled={!enrollBadge.trim()}
-              />
+
+              <button
+                type="button"
+                onClick={() => setEnrollBadge((p) => (p.toUpperCase().startsWith("EMP") ? p : "EMP" + p))}
+                className="px-4 py-2 rounded-2xl bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 font-black text-xs transition-all active:scale-95"
+              >
+                + EMP
+              </button>
+
+              <button
+                type="button"
+                onClick={handleEnrollBadgeLookup}
+                disabled={enrollBadgeLoading || !enrollBadge.trim()}
+                className="px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-sm transition-all shadow-md disabled:opacity-50 flex items-center gap-2 active:scale-95"
+              >
+                {enrollBadgeLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>متابعة ✓</span>}
+              </button>
             </div>
 
-            <button onClick={resetEnrollment} className="w-full py-3 rounded-2xl bg-stone-800/60 hover:bg-stone-800 text-stone-400 text-sm font-bold transition-all flex items-center justify-center gap-2">
-              <ArrowRight className="w-4 h-4" /><span>إلغاء والعودة للشاشة الرئيسية</span>
+            {enrollBadgeError && (
+              <div className="p-3 rounded-xl bg-rose-950/50 border border-rose-800/50 text-rose-300 text-xs flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <span>{enrollBadgeError}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Employees List Card */}
+          <div className="bg-stone-900/80 backdrop-blur-xl border border-indigo-800/40 rounded-3xl p-5 shadow-2xl space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-stone-800">
+              <div>
+                <h3 className="text-white font-black text-base flex items-center gap-2">
+                  <Users className="w-5 h-5 text-indigo-400" />
+                  <span>قائمة موظفي المحل المعرّفين بالنظام</span>
+                </h3>
+                <p className="text-xs text-stone-400 mt-0.5">انقر على الموظف المراد تعريفه ووضع بصمته فوراً</p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <Search className="w-4 h-4 text-stone-500 absolute right-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={employeeSearchTerm}
+                    onChange={(e) => setEmployeeSearchTerm(e.target.value)}
+                    placeholder="بحث بالاسم أو الرقم..."
+                    className="px-9 py-1.5 rounded-xl bg-stone-800 border border-stone-700 text-white text-xs focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+                <button
+                  onClick={() => loadEmployeesList()}
+                  disabled={employeesLoading}
+                  className="p-2 rounded-xl bg-stone-800 hover:bg-stone-700 text-stone-400 hover:text-white transition"
+                  title="تحديث القائمة"
+                >
+                  <RefreshCw className={`w-4 h-4 ${employeesLoading ? "animate-spin" : ""}`} />
+                </button>
+              </div>
+            </div>
+
+            {employeesLoading && employeesList.length === 0 ? (
+              <div className="py-12 text-center text-stone-500 text-xs flex items-center justify-center gap-2">
+                <Loader2 className="w-5 h-5 animate-spin text-indigo-400" />
+                <span>جاري تحميل بيانات الموظفين...</span>
+              </div>
+            ) : filteredEmployees.length === 0 ? (
+              <div className="py-12 text-center text-stone-500 text-xs">
+                لا يوجد موظفون مطابقون لعملية البحث
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {filteredEmployees.map((emp) => (
+                  <div
+                    key={emp.id}
+                    className="p-4 rounded-2xl bg-stone-800/80 border border-stone-700/80 hover:border-indigo-500/70 transition-all flex items-center justify-between gap-3 group"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div
+                        className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 font-bold ${
+                          emp.fingerprintEnrolled
+                            ? "bg-emerald-950/60 text-emerald-400 border border-emerald-800/60"
+                            : "bg-amber-950/60 text-amber-400 border border-amber-800/60"
+                        }`}
+                      >
+                        <Fingerprint className="w-6 h-6" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-white font-bold text-sm truncate">{emp.nameAr}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-stone-400 text-xs font-mono font-bold bg-stone-900 px-2 py-0.5 rounded-lg border border-stone-700">
+                            {emp.badgeNumber || "بدون رقم"}
+                          </span>
+                          {emp.jobTitle && (
+                            <span className="text-stone-500 text-xs truncate">{emp.jobTitle}</span>
+                          )}
+                        </div>
+                        <div className="mt-1.5">
+                          {emp.fingerprintEnrolled ? (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-400">
+                              <CheckCircle2 className="w-3 h-3" />
+                              <span>البصمة مسجلة ومفعلة ✓</span>
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-400">
+                              <AlertCircle className="w-3 h-3" />
+                              <span>بانتظار التعريف ⚠️</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleSelectEmployeeForEnroll(emp)}
+                      className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all shrink-0 active:scale-95 shadow-sm ${
+                        emp.fingerprintEnrolled
+                          ? "bg-stone-700 hover:bg-indigo-600 text-stone-200 hover:text-white"
+                          : "bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-900/50"
+                      }`}
+                    >
+                      {emp.fingerprintEnrolled ? "إعادة تعريف ↺" : "تعريف البصمة 👆"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="text-center">
+            <button
+              onClick={resetEnrollment}
+              className="px-6 py-3 rounded-2xl bg-stone-800 hover:bg-stone-700 text-stone-400 hover:text-white text-xs font-bold transition-all"
+            >
+              ✕ إغلاق واجهة تعريف البصمة والعودة لكشك الحضور
             </button>
           </div>
         </main>
@@ -1021,83 +1382,76 @@ export default function KioskPage() {
   }
 
   // ════════════════════════════════════════════════════════════════════════
-  //  RENDER: ENROLLMENT — CONFIRM EMPLOYEE
+  //  RENDER: ENROLLMENT — STEP 3: SCAN EMPLOYEE FINGERPRINT
+  //  ("يقوم الموظف بضغط لإدخال بصمته لحفظ بصمته ويؤكد البصمة")
   // ════════════════════════════════════════════════════════════════════════
 
   if (view === "ENROLL_CONFIRM" && enrollEmployee) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-950 via-indigo-950 to-stone-950 flex flex-col" dir="rtl">
-        <KioskHeader showEnrollBtn={false} />
-        <main className="flex-1 flex items-center justify-center p-6">
-          <div className="w-full max-w-sm space-y-5">
-            {/* Employee card */}
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-indigo-600/20 border-2 border-indigo-500/50 mb-4">
-                <User className="w-10 h-10 text-indigo-400" />
-              </div>
-              <h2 className="text-white font-black text-2xl">{enrollEmployee.nameAr}</h2>
-              {enrollEmployee.jobTitle && <p className="text-stone-400 text-sm mt-1">{enrollEmployee.jobTitle}</p>}
-              <p className="text-stone-500 text-xs mt-1 font-mono">#{enrollBadge}</p>
+      <div className="min-h-screen bg-gradient-to-br from-stone-950 via-indigo-950 to-stone-950 flex flex-col justify-center items-center p-4" dir="rtl">
+        <div className="w-full max-w-md space-y-5">
+          {/* Employee Card */}
+          <div className="text-center">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-indigo-600/20 border-2 border-indigo-500/50 mb-3 shadow-xl">
+              <User className="w-10 h-10 text-indigo-400" />
+            </div>
+            <h2 className="text-white font-black text-2xl">{enrollEmployee.nameAr}</h2>
+            {enrollEmployee.jobTitle && (
+              <p className="text-indigo-300 text-xs font-bold mt-1">{enrollEmployee.jobTitle}</p>
+            )}
+            <p className="text-stone-400 text-xs mt-1 font-mono tracking-wider font-bold">
+              الرقم الوظيفي: #{enrollBadge || "EMP"}
+            </p>
 
-              {enrollEmployee.fingerprintEnrolled && (
-                <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-600/20 border border-amber-600/40 text-amber-300 text-xs font-bold">
-                  <AlertCircle className="w-3.5 h-3.5" />
-                  <span>بصمة مسجلة مسبقاً — ستُحذف وتُستبدل بالجديدة</span>
-                </div>
-              )}
+            {enrollEmployee.fingerprintEnrolled && (
+              <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-600/20 border border-amber-600/40 text-amber-300 text-xs font-bold">
+                <AlertCircle className="w-3.5 h-3.5" />
+                <span>بصمة مسجلة سابقاً — سيتم استبدالها بالجديدة</span>
+              </div>
+            )}
+          </div>
+
+          <div className="bg-stone-900/85 backdrop-blur-xl border border-indigo-800/40 rounded-3xl p-6 shadow-2xl space-y-5">
+            <div className="p-4 rounded-2xl bg-indigo-950/60 border border-indigo-800/50 text-center space-y-2">
+              <Fingerprint className="w-12 h-12 text-indigo-400 mx-auto animate-pulse" />
+              <p className="text-white font-bold text-sm">جاهز لمسح بصمة إصبع الموظف</p>
+              <p className="text-stone-300 text-xs leading-relaxed">
+                اطلب من الموظف وضع إصبعه على حساس بصمة الجهاز (Touch ID أو بصمة الهاتف/التابلت) ثم اضغط على الزر الكبير أدناه.
+              </p>
             </div>
 
-            <div className="bg-stone-900/80 backdrop-blur-xl border border-indigo-800/40 rounded-3xl p-6 shadow-2xl space-y-4">
-              <div className="p-4 rounded-xl bg-indigo-950/50 border border-indigo-800/50 text-center space-y-2">
-                <Fingerprint className="w-10 h-10 text-indigo-400 mx-auto" />
-                <p className="text-white font-bold text-sm">اطلب من الموظف وضع إصبعه</p>
-                <p className="text-stone-400 text-xs">سيطلب الجهاز بصمة الإصبع مباشرةً بعد الضغط أدناه</p>
+            {enrollError && (
+              <div className="p-3 rounded-xl bg-rose-950/50 border border-rose-800/50 text-rose-300 text-xs flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <span>{enrollError}</span>
               </div>
+            )}
 
-              {enrollError && (
-                <div className="p-3 rounded-xl bg-rose-950/50 border border-rose-800/50 text-rose-300 text-xs flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" /><span>{enrollError}</span>
-                </div>
+            <button
+              onClick={handleEnrollScan}
+              disabled={enrollLoading}
+              className="w-full py-5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-lg transition-all shadow-xl shadow-indigo-900/50 flex items-center justify-center gap-3 active:scale-95 disabled:opacity-60"
+            >
+              {enrollLoading ? (
+                <>
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                  <span>جاري قراءة وتأكيد البصمة...</span>
+                </>
+              ) : (
+                <>
+                  <Fingerprint className="w-6 h-6" />
+                  <span>👆 اضغط هنا لتعريف وحفظ البصمة الآن</span>
+                </>
               )}
+            </button>
 
-              <button
-                onClick={handleEnrollScan}
-                disabled={enrollLoading}
-                className="w-full py-5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xl transition-all shadow-lg flex items-center justify-center gap-3 active:scale-95 disabled:opacity-60"
-              >
-                <Fingerprint className="w-6 h-6" />
-                <span>ابدأ تسجيل البصمة الآن</span>
-              </button>
-
-              <button onClick={() => setView("ENROLL_BADGE")} className="w-full py-3 rounded-2xl bg-stone-800 hover:bg-stone-700 text-stone-400 text-sm font-bold transition-all flex items-center justify-center gap-2">
-                <RefreshCw className="w-4 h-4" /><span>رجوع</span>
-              </button>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  // ════════════════════════════════════════════════════════════════════════
-  //  RENDER: ENROLLMENT — SCANNING (loading state)
-  // ════════════════════════════════════════════════════════════════════════
-
-  if (view === "ENROLL_SCAN") {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-stone-950 via-indigo-950 to-stone-950 flex flex-col items-center justify-center p-6" dir="rtl">
-        <div className="text-center space-y-8 max-w-sm w-full">
-          <div className="inline-flex items-center justify-center w-36 h-36 rounded-full border-4 border-indigo-400 bg-indigo-600/10 animate-pulse">
-            <Fingerprint className="w-16 h-16 text-indigo-400" />
-          </div>
-          <div>
-            <h2 className="text-white font-black text-2xl">ضع إصبعك الآن</h2>
-            <p className="text-stone-400 text-sm mt-2">الجهاز يحاول قراءة بصمتك...</p>
-            <p className="text-indigo-400 text-xs mt-1">اتبع تعليمات الجهاز وانتظر</p>
-          </div>
-          <div className="flex items-center justify-center gap-2 text-stone-500 text-xs">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span>جاري التسجيل...</span>
+            <button
+              onClick={() => setView("ENROLL_DASHBOARD")}
+              className="w-full py-3 rounded-2xl bg-stone-800 hover:bg-stone-700 text-stone-400 text-xs font-bold transition-all flex items-center justify-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>رجوع لقائمة الموظفين</span>
+            </button>
           </div>
         </div>
       </div>
@@ -1105,30 +1459,59 @@ export default function KioskPage() {
   }
 
   // ════════════════════════════════════════════════════════════════════════
-  //  RENDER: ENROLLMENT — DONE ✅
+  //  RENDER: ENROLLMENT — SCANNING (loading screen)
+  // ════════════════════════════════════════════════════════════════════════
+
+  if (view === "ENROLL_SCAN") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-stone-950 via-indigo-950 to-stone-950 flex flex-col items-center justify-center p-6" dir="rtl">
+        <div className="text-center space-y-8 max-w-sm w-full">
+          <div className="inline-flex items-center justify-center w-36 h-36 rounded-full border-4 border-indigo-400 bg-indigo-600/10 animate-pulse shadow-2xl shadow-indigo-900/50">
+            <Fingerprint className="w-16 h-16 text-indigo-400" />
+          </div>
+          <div>
+            <h2 className="text-white font-black text-2xl">ضع إصبع الموظف على الحساس الآن</h2>
+            <p className="text-stone-300 text-sm mt-2">الجهاز يقرأ البصمة للتحقق منها وحفظها...</p>
+            <p className="text-indigo-400 text-xs mt-1">اتبع إشعار بصمة الجهاز وانتظر لحظة</p>
+          </div>
+          <div className="flex items-center justify-center gap-2 text-stone-400 text-xs">
+            <Loader2 className="w-4 h-4 animate-spin text-indigo-400" />
+            <span>جاري التسجيل والتأكيد...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════
+  //  RENDER: ENROLLMENT — STEP 4: SUCCESS CONFIRMATION ✅
+  //  ("نكون هكدا عرفنا بصمة الموظف برقمه الوظيفي ولن يخرج الخطا الواضح امامك بعدها")
   // ════════════════════════════════════════════════════════════════════════
 
   if (view === "ENROLL_DONE") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-indigo-900 to-stone-950 flex flex-col items-center justify-center p-6" dir="rtl">
-        <div className="text-center space-y-6 max-w-sm w-full">
-          <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-indigo-500/20 border-4 border-indigo-400 shadow-2xl">
-            <CheckCircle2 className="w-14 h-14 text-indigo-300" />
+      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-emerald-950 to-stone-950 flex flex-col items-center justify-center p-6" dir="rtl">
+        <div className="text-center space-y-6 max-w-md w-full">
+          <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-emerald-500/20 border-4 border-emerald-400 shadow-2xl">
+            <CheckCircle2 className="w-14 h-14 text-emerald-300" />
           </div>
+
           <div>
-            <h2 className="text-3xl font-black text-white mb-3">
+            <h2 className="text-3xl font-black text-white mb-2">
               {enrollEmployee?.nameAr || "الموظف"}
             </h2>
-            <p className="text-indigo-200 text-base font-medium">
-              ✅ تم تسجيل البصمة بنجاح!
+            <p className="text-emerald-300 text-lg font-bold">
+              ✅ تم تعريف وتأكيد البصمة بنجاح!
             </p>
-            <p className="text-stone-400 text-sm mt-2">
-              يمكن للموظف الآن استخدام بصمته على هذا الجهاز لتسجيل الحضور والانصراف.
+            <p className="text-stone-300 text-xs mt-2 leading-relaxed">
+              أصبحت بصمة الإصبع الآن مرتبطة ومحفوظة بالرقم الوظيفي{" "}
+              <strong className="text-white font-mono">{enrollBadge}</strong> على هذا الجهاز. لن يظهر خطأ البصمة غير موجودة بعد الآن!
             </p>
           </div>
-          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 text-sm text-right space-y-2">
+
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 text-sm text-right space-y-2 border border-white/10">
             <div className="flex items-center justify-between">
-              <span className="text-stone-300">الموظف:</span>
+              <span className="text-stone-300">اسم الموظف:</span>
               <span className="font-bold text-white">{enrollEmployee?.nameAr}</span>
             </div>
             <div className="flex items-center justify-between">
@@ -1136,28 +1519,30 @@ export default function KioskPage() {
               <span className="font-bold text-white font-mono">#{enrollBadge}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-stone-300">الجهاز:</span>
-              <span className="font-bold text-indigo-300">هذا الجهاز ✓</span>
+              <span className="text-stone-300">حالة البصمة:</span>
+              <span className="font-bold text-emerald-300">معرّفة ومؤكدة بنجاح ✓</span>
             </div>
           </div>
-          <div className="flex flex-col gap-3">
+
+          <div className="flex flex-col gap-3 pt-2">
             <button
               onClick={() => {
                 setEnrollBadge("");
                 setEnrollEmployee(null);
                 setEnrollError("");
-                setView("ENROLL_BADGE");
+                setView("ENROLL_DASHBOARD");
               }}
-              className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-all flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-all flex items-center justify-center gap-2 shadow-lg"
             >
-              <UserPlus className="w-4 h-4" />
-              <span>تسجيل بصمة موظف آخر</span>
+              <UserPlus className="w-5 h-5" />
+              <span>تعريف بصمة موظف آخر</span>
             </button>
+
             <button
               onClick={resetEnrollment}
-              className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm transition-all"
+              className="w-full py-3.5 rounded-2xl bg-white/15 hover:bg-white/25 text-white font-bold text-sm transition-all"
             >
-              العودة لشاشة الحضور
+              ✕ إغلاق واجهة تعريف البصمة والعودة لكشك الحضور
             </button>
           </div>
         </div>

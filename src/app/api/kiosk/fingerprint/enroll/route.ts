@@ -96,9 +96,8 @@ export async function POST(req: NextRequest) {
       userDisplayName: employee.nameAr,
       attestationType: "none",
       authenticatorSelection: {
-        authenticatorAttachment: "platform", // Built-in device (Touch ID, Face ID, fingerprint)
         requireResidentKey: false,
-        userVerification: "required",
+        userVerification: "preferred",
       },
       excludeCredentials,
     });
@@ -150,7 +149,7 @@ export async function PATCH(req: NextRequest) {
         expectedChallenge: stored.challenge,
         expectedOrigin: origin,
         expectedRPID: rpID,
-        requireUserVerification: true,
+        requireUserVerification: false,
       });
     } catch (verErr: any) {
       return err("فشل التحقق من البصمة: " + (verErr?.message || "خطأ غير متوقع"), 400);

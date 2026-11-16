@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
       allowCredentials: [
         { id: employee.webAuthnCredentialId },
       ],
-      userVerification: "required",
+      userVerification: "preferred",
     });
 
     // Store challenge with 2-min expiry
@@ -165,7 +165,7 @@ export async function PATCH(req: NextRequest) {
         expectedChallenge: stored.challenge,
         expectedOrigin: origin,
         expectedRPID: rpID,
-        requireUserVerification: true,
+        requireUserVerification: false,
         credential: {
           id: employee.webAuthnCredentialId,
           publicKey: new Uint8Array(publicKeyBytes),
