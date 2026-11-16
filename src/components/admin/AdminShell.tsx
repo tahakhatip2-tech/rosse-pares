@@ -77,7 +77,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     title: "الإنتاج وسلاسل الإمداد",
     items: [
-      { href: "/admin/procurement", label: "المشتريات والموردين", icon: ShoppingCart, soon: true },
+      { href: "/admin/procurement", label: "المشتريات والموردين", icon: ShoppingCart },
       { href: "/admin/production", label: "التجهيز والتجميع", icon: Hammer, soon: true },
     ],
   },
